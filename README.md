@@ -49,7 +49,18 @@ Output: `w1440.png`, `w810.png`, `w390.png`, `extract.json`.
 
 ## Status
 
-Awaiting approval on the nine defaults in section 10. Nothing is built yet.
+**Shipped 2026-09-04.** Approved with all defaults plus code-component interactions.
+
+Installed at `~/.claude/skills/create-template/` — `SKILL.md`, five references
+(`framer-traps.md`, `interactions.md`, `higgsfield.md`, `capture.md`, `quality-bars.md`),
+five scripts and a build ledger. The Raycast script command lives at
+`~/.raycast-scripts/create-framer-template.sh`; the `;create-template` snippet is imported
+through `scripts/install-raycast-snippet.sh`.
+
+Scripts verified: `capture-reference.mjs` against windmillgrowth.com, `verify-live.mjs`
+against the live Osprey build (correctly read `min 1440` / `min 810 .. max 1439.98`),
+`compare.mjs` at 0.0% deltas on an identical pair, `slice-sheet.py` on a synthetic
+uneven-gutter contact sheet.
 
 ---
 
