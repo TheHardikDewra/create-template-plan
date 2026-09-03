@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>/create-template — build plan</title>
+<meta name="description" content="Plan for a Raycast-triggered Claude Code skill that rebuilds any landing page in Framer at 1440/810/390 with Higgsfield graphics.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F2; --card:#FFFFFF; --ink:#16181C; --ink-2:#3D424B; --mute:#767B84;
+  --rule:#E2E0D9; --rule-2:#EDEBE5; --accent:#B4451F; --accent-soft:#FBEDE7; --accent-line:#F0D9CE;
+  --dark:#16181C; --dark-2:#22252B; --dark-3:#2C3037; --dark-ink:#E9E7E1; --dark-mute:#8D9299;
+  --ok:#1F6B4A; --ok-soft:#EAF3EE;
+  --r:4px;
+  --mono:ui-monospace,"Haffer Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:400 16px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(180,69,31,.3)}
+a:hover{border-bottom-color:var(--accent)}
+h1,h2,h3,h4{margin:0;letter-spacing:-.018em;font-weight:600;line-height:1.15}
+p{margin:0 0 .9em}p:last-child{margin-bottom:0}
+code,kbd{font-family:var(--mono);font-size:.86em}
+kbd{background:var(--card);border:1px solid var(--rule);border-bottom-width:2px;border-radius:var(--r);
+  padding:1px 5px;font-size:.8em;color:var(--ink-2)}
+.wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+.mono{font-family:var(--mono)}
+.mute{color:var(--mute)}
+
+/* ---------- masthead ---------- */
+.mast{background:var(--dark);color:var(--dark-ink);padding:0 0 54px}
+.mastbar{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:18px 0;border-bottom:1px solid var(--dark-3)}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--dark-mute)}
+.brand svg{width:17px;height:17px;fill:var(--dark-mute)}
+.mastbar .meta{font-family:var(--mono);font-size:12px;color:var(--dark-mute)}
+.mast h1{font-size:clamp(33px,5.4vw,58px);margin:50px 0 0;max-width:20ch}
+.mast h1 em{font-family:Newsreader,Georgia,serif;font-style:italic;font-weight:400;color:#C97A55}
+.mast .lede{max-width:64ch;margin-top:20px;font-size:17px;color:#B9BCC1}
+.keycombo{display:inline-flex;align-items:center;gap:6px;margin-top:28px;
+  background:var(--dark-2);border:1px solid #33373E;border-radius:var(--r);padding:9px 13px;
+  font-family:var(--mono);font-size:13.5px;color:#E9E7E1}
+.keycombo b{color:#D98D67;font-weight:500}
+.cur{width:1.5px;height:14px;background:#D98D67;animation:blink 1.05s steps(1) infinite;display:inline-block}
+@keyframes blink{50%{opacity:0}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:1px;
+  background:var(--dark-3);border:1px solid var(--dark-3);border-radius:var(--r);margin-top:36px;overflow:hidden}
+.stat{background:var(--dark);padding:15px 17px}
+.stat b{display:block;font-family:var(--mono);font-size:24px;font-weight:500;letter-spacing:-.02em}
+.stat span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--dark-mute);margin-top:5px}
+.jump{display:flex;flex-wrap:wrap;gap:7px;margin-top:26px}
+.jump a{font-family:var(--mono);font-size:11.5px;padding:5px 10px;border:1px solid var(--dark-3);
+  border-radius:var(--r);color:#B9BCC1;background:var(--dark-2)}
+.jump a:hover{color:#E9E7E1;border-color:#4A4F57}
+
+/* ---------- sections ---------- */
+section{padding:70px 0;border-bottom:1px solid var(--rule);scroll-margin-top:10px}
+section:last-of-type{border-bottom:0}
+.eyebrow{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.eyebrow svg{width:15px;height:15px;fill:var(--accent);flex:none}
+.eyebrow i{font-style:normal;color:var(--mute)}
+h2{font-size:clamp(25px,3.3vw,34px);max-width:26ch}
+.sub{max-width:70ch;margin-top:14px;color:var(--ink-2);font-size:16.5px}
+
+/* ---------- ledger ---------- */
+.ledger{margin-top:32px;border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden}
+.lrow{display:grid;grid-template-columns:32px 1.3fr 1fr 84px 24px;gap:14px;align-items:center;
+  padding:13px 16px;border-top:1px solid var(--rule-2);cursor:pointer;background:none;
+  border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;font:inherit;color:inherit}
+.lrow:first-child{border-top:0}
+.lrow:hover{background:#FBFAF7}
+.lrow[aria-expanded=true]{background:var(--accent-soft)}
+.lnum{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.lname{font-weight:500;letter-spacing:-.01em}
+.lname s{display:block;font-weight:400;font-size:12px;color:var(--mute);text-decoration:none;
+  font-family:var(--mono);margin-top:2px}
+.lref{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.ldate{font-family:var(--mono);font-size:12px;color:var(--mute);text-align:right}
+.lcar{width:16px;height:16px;fill:var(--mute);transition:transform .16s ease;justify-self:end}
+.lrow[aria-expanded=true] .lcar{transform:rotate(90deg);fill:var(--accent)}
+.ldet{display:none;padding:2px 16px 20px;border-top:1px solid var(--rule-2);background:#FBFAF7}
+.ldet.on{display:block}
+.quote{font-family:var(--mono);font-size:12.5px;line-height:1.65;color:var(--ink-2);
+  background:var(--card);border:1px solid var(--rule);border-left:2px solid var(--accent);
+  border-radius:0 var(--r) var(--r) 0;padding:11px 13px;margin:13px 0 15px;white-space:pre-wrap}
+.taught{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.taught li{display:grid;grid-template-columns:15px 1fr;gap:9px;font-size:14.5px;color:var(--ink-2)}
+.taught svg{width:14px;height:14px;fill:var(--ok);margin-top:4px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 7px;border-radius:var(--r);
+  background:var(--card);border:1px solid var(--rule);color:var(--ink-2)}
+.built{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin-top:12px}
+
+/* ---------- root cause ---------- */
+.cause{margin-top:32px;background:var(--dark);border-radius:var(--r);padding:26px 28px;color:var(--dark-ink)}
+.cause h3{font-size:18px;color:#fff;margin-bottom:10px;display:flex;gap:9px;align-items:center}
+.cause h3 svg{width:18px;height:18px;fill:#D98D67;flex:none}
+.cause p{color:#B9BCC1;font-size:15.5px;max-width:74ch}
+.cause .proof{margin-top:16px;background:var(--dark-2);border:1px solid var(--dark-3);border-radius:var(--r);
+  padding:13px 15px;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:#C9CCD1}
+.cause .proof b{color:#D98D67;font-weight:500}
+.cause .fix{margin-top:16px;font-size:15px;color:#E9E7E1;border-left:2px solid #D98D67;padding-left:13px}
+
+.rjbar{display:flex;flex-wrap:wrap;gap:7px;margin-top:30px;align-items:center}
+.rjbar .trapcount{margin-left:auto}
+.rj{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.rjgroup{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden}
+.rjgroup h4{font-size:13px;padding:12px 15px;margin:0;border-bottom:1px solid var(--rule-2);
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.rjgroup h4 s{text-decoration:none;font-family:var(--mono);font-size:11px;color:var(--mute);font-weight:400}
+.rjgroup .demand{padding:10px 15px;background:var(--accent-soft);border-bottom:1px solid var(--accent-line);
+  font-size:13.5px;color:#7A3417}
+.rjgroup .demand b{font-weight:600}
+.rjgroup ul{margin:0;padding:8px 15px 13px;list-style:none;display:grid;gap:9px}
+.rjgroup li{font-size:13.5px;line-height:1.55;color:var(--ink-2);font-style:italic;
+  padding-left:11px;border-left:2px solid var(--rule)}
+
+/* ---------- buckets ---------- */
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(322px,1fr));gap:16px;margin-top:32px}
+.bucket{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:18px 18px 15px}
+.bucket h3{font-size:14.5px;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.bucket h3 svg{width:16px;height:16px;fill:var(--accent);flex:none}
+.bucket .cnt{font-family:var(--mono);font-size:11px;color:var(--mute);margin-bottom:11px}
+.bucket ul{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.bucket li{font-size:13.5px;line-height:1.5;color:var(--ink-2);padding-left:12px;position:relative}
+.bucket li:before{content:"";position:absolute;left:0;top:8px;width:4px;height:4px;background:var(--accent)}
+.bucket li b{font-weight:500;color:var(--ink)}
+
+/* ---------- pipeline ---------- */
+.pipe{display:grid;grid-template-columns:262px 1fr;margin-top:32px;border:1px solid var(--rule);
+  border-radius:var(--r);background:var(--card);overflow:hidden}
+/* a 1fr track takes its floor from the item's min-content, and a <pre> blows that
+   out even with overflow-x:auto. min-width:0 lets every track shrink to its share. */
+.pipe>*,.ex>*,.cost>*,.dec>*,.rc>*,.buckets>*,.rj>*{min-width:0}
+.prail{border-right:1px solid var(--rule);background:#FBFAF7}
+.pbtn{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:baseline;width:100%;text-align:left;
+  padding:10px 14px;background:none;border:0;border-bottom:1px solid var(--rule-2);cursor:pointer;
+  font:inherit;color:var(--ink-2);font-size:14px}
+.pbtn:last-child{border-bottom:0}
+.pbtn .pn{font-family:var(--mono);font-size:11px;color:var(--mute)}
+.pbtn:hover{background:#F3F1EC;color:var(--ink)}
+.pbtn[aria-selected=true]{background:var(--card);color:var(--ink);font-weight:500;
+  box-shadow:inset 2px 0 0 var(--accent)}
+.pbtn[aria-selected=true] .pn{color:var(--accent)}
+.ppane{padding:24px 26px;min-height:470px}
+.ppane h3{font-size:19px;margin-bottom:5px}
+.ppane .pmeta{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin-bottom:15px}
+.ppane p{font-size:15px;color:var(--ink-2);max-width:64ch}
+.ppane h4{font-size:11.5px;font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase;
+  color:var(--mute);margin:20px 0 9px}
+pre{margin:0;background:var(--dark);color:#DCD9D2;border-radius:var(--r);padding:13px 15px;
+  overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.62}
+pre .c{color:#7E848C}
+pre .k{color:#D98D67}
+pre .s{color:#9CB89F}
+.ppane ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;max-width:68ch}
+.ppane ul li{font-size:14.5px;color:var(--ink-2);padding-left:14px;position:relative;line-height:1.55}
+.ppane ul li:before{content:"";position:absolute;left:0;top:9px;width:5px;height:1px;background:var(--accent)}
+.ppane ul li b{color:var(--ink);font-weight:500}
+.ppane code{background:#F3F1EC;padding:1px 4px;border-radius:2px;color:#7A3417;font-size:12.5px}
+.gate{display:flex;gap:9px;align-items:flex-start;margin-top:18px;background:var(--accent-soft);
+  border:1px solid var(--accent-line);border-radius:var(--r);padding:11px 13px;font-size:14px;color:#7A3417}
+.gate svg{width:16px;height:16px;fill:var(--accent);flex:none;margin-top:3px}
+.gate code{background:#F6DFD5;color:#7A3417}
+
+/* ---------- traps ---------- */
+.trapbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:28px}
+.trapbar input{flex:1 1 210px;min-width:170px;font:inherit;font-size:14px;padding:8px 11px;
+  border:1px solid var(--rule);border-radius:var(--r);background:var(--card);color:var(--ink)}
+.trapbar input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:11px;padding:6px 10px;border:1px solid var(--rule);
+  border-radius:var(--r);background:var(--card);color:var(--ink-2);cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.trapcount{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.traps{margin-top:14px;border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden}
+.trap{display:grid;grid-template-columns:72px 1fr;gap:14px;padding:11px 16px;border-top:1px solid var(--rule-2)}
+.trap:first-child{border-top:0}
+.trap .cat{font-family:var(--mono);font-size:10px;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--mute);padding-top:3px}
+.trap .body{font-size:14px;color:var(--ink-2);line-height:1.55}
+.trap .body b{color:var(--ink);font-weight:500}
+.trap .body code{background:#F3F1EC;padding:1px 4px;border-radius:2px;color:#7A3417;font-size:12.5px}
+.empty{padding:26px 16px;text-align:center;color:var(--mute);font-size:14px}
+
+/* ---------- worked example ---------- */
+.ex{display:grid;grid-template-columns:1fr 296px;gap:26px;margin-top:30px;align-items:start}
+.bptabs{display:flex;gap:6px;margin-bottom:13px}
+.bptab{font-family:var(--mono);font-size:12.5px;padding:7px 13px;border:1px solid var(--rule);
+  border-radius:var(--r);background:var(--card);color:var(--ink-2);cursor:pointer}
+.bptab[aria-selected=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.shotbox{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);padding:13px;
+  display:flex;justify-content:center}
+.shotbox .frame{border:1px solid var(--rule-2);max-height:500px;overflow:hidden;position:relative;width:100%}
+.shotbox img{width:100%}
+.shotbox .fade{position:absolute;left:0;right:0;bottom:0;height:48px;background:var(--card);opacity:.94}
+.exside{display:grid;gap:15px}
+.panel{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden}
+.panel h4{font-size:11px;font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase;
+  color:var(--mute);padding:11px 14px;border-bottom:1px solid var(--rule-2);margin:0}
+.panel .pb{padding:12px 14px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13px;margin:0}
+.kv dt{font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.kv dd{margin:0;color:var(--ink-2)}
+.swatches{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}
+.sw{width:32px;height:32px;border-radius:2px;border:1px solid rgba(0,0,0,.1);position:relative}
+.sw span{position:absolute;inset:auto 0 -17px;font-family:var(--mono);font-size:9px;color:var(--mute);text-align:center}
+.sectbl{width:100%;border-collapse:collapse;font-size:13px}
+.sectbl th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--mute);text-align:left;font-weight:400;padding:0 8px 7px 0;border-bottom:1px solid var(--rule-2)}
+.sectbl td{padding:7px 8px 7px 0;border-bottom:1px solid var(--rule-2);color:var(--ink-2);vertical-align:top}
+.sectbl tr:last-child td{border-bottom:0}
+.sectbl td:first-child{font-family:var(--mono);font-size:11px;color:var(--mute);width:18px}
+.sectbl .h{color:var(--ink);font-weight:500}
+.bar{height:5px;background:var(--accent);border-radius:1px;min-width:2px}
+
+/* ---------- cost ---------- */
+.cost{display:grid;grid-template-columns:1fr 340px;gap:26px;margin-top:30px;align-items:start}
+.costtbl{width:100%;border-collapse:collapse;font-size:14px}
+.costtbl th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--mute);text-align:left;font-weight:400;padding:0 10px 8px 0;border-bottom:1px solid var(--rule)}
+.costtbl td{padding:8px 10px 8px 0;border-bottom:1px solid var(--rule-2);color:var(--ink-2)}
+.costtbl td:first-child{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.costtbl td.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.costtbl tr.hi td{background:var(--accent-soft)}
+.spend{margin-top:20px;border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden}
+.spend h4{font-size:11px;font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase;
+  color:var(--mute);padding:11px 14px;border-bottom:1px solid var(--rule-2);margin:0}
+.spendrow{display:grid;grid-template-columns:96px 1fr 60px;gap:12px;align-items:center;
+  padding:8px 14px;border-bottom:1px solid var(--rule-2);font-size:13.5px}
+.spendrow:last-child{border-bottom:0}
+.spendrow b{font-weight:500;color:var(--ink)}
+.spendrow .t{font-family:var(--mono);font-size:12px;text-align:right;color:var(--ink-2)}
+.spendrow .g{height:6px;background:var(--rule-2);border-radius:1px;overflow:hidden}
+.spendrow .g i{display:block;height:100%;background:var(--accent)}
+.calc{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);padding:18px}
+.calc label{display:block;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--mute);margin:0 0 6px}
+.calc select,.calc input[type=number]{width:100%;font:inherit;font-size:14px;padding:8px 10px;
+  border:1px solid var(--rule);border-radius:var(--r);background:var(--paper);color:var(--ink);
+  font-family:var(--mono)}
+.calc .row{margin-bottom:14px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.out{margin-top:16px;padding-top:15px;border-top:1px solid var(--rule)}
+.out .big{font-family:var(--mono);font-size:30px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.out .big s{text-decoration:none;font-size:13px;color:var(--mute);display:block;margin-top:6px}
+.verdict{margin-top:12px;font-size:13.5px;display:flex;gap:8px;align-items:flex-start}
+.verdict svg{width:16px;height:16px;flex:none;margin-top:2px}
+.verdict.ok{color:var(--ok)}.verdict.ok svg{fill:var(--ok)}
+.verdict.no{color:var(--accent)}.verdict.no svg{fill:var(--accent)}
+
+/* ---------- raycast ---------- */
+.rc{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:30px}
+.rccard{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden;
+  display:flex;flex-direction:column}
+.rchead{padding:15px 17px;border-bottom:1px solid var(--rule-2)}
+.rchead h3{font-size:15px;display:flex;align-items:center;gap:8px}
+.rchead h3 svg{width:16px;height:16px;fill:var(--accent);flex:none}
+.rchead p{font-size:13.5px;color:var(--mute);margin:6px 0 0}
+.rcbody{padding:15px 17px;flex:1}
+.fakebar{display:flex;align-items:center;gap:8px;background:var(--dark);border-radius:var(--r);
+  padding:11px 13px;font-family:var(--mono);font-size:13.5px;color:#E9E7E1;margin-bottom:13px}
+.fakebar svg{width:15px;height:15px;fill:#8D9299;flex:none}
+.expand{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);padding:12px 13px;
+  font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--ink-2);white-space:pre-wrap}
+.expand mark{background:#FBEDE7;color:#7A3417;padding:0 2px;border-radius:2px}
+.copy{margin-top:11px;font:inherit;font-family:var(--mono);font-size:11.5px;padding:7px 12px;
+  border:1px solid var(--rule);border-radius:var(--r);background:var(--paper);color:var(--ink-2);cursor:pointer}
+.copy:hover{border-color:var(--ink);color:var(--ink)}
+.copy[data-done="1"]{border-color:var(--ok);color:var(--ok)}
+.argrow{display:grid;grid-template-columns:104px 1fr;gap:10px;font-size:13.5px;padding:7px 0;
+  border-bottom:1px solid var(--rule-2);color:var(--ink-2)}
+.argrow:last-child{border-bottom:0}
+.argrow b{font-family:var(--mono);font-size:11.5px;font-weight:400;color:var(--ink)}
+
+/* ---------- tree ---------- */
+.tree{margin-top:28px;background:var(--dark);border-radius:var(--r);padding:20px 22px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.85;color:#B9BCC1;overflow-x:auto;white-space:pre}
+.tree b{color:#E9E7E1;font-weight:500}
+.tree i{font-style:normal;color:#7E848C}
+.tree u{text-decoration:none;color:#D98D67}
+
+/* ---------- decisions ---------- */
+.dec{margin-top:30px;display:grid;grid-template-columns:1fr 316px;gap:26px;align-items:start}
+.dlist{display:grid;gap:12px}
+.dcard{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);padding:15px 17px}
+.dcard h3{font-size:14px;margin-bottom:3px}
+.dcard p{font-size:13.5px;color:var(--mute);margin:0 0 11px}
+.opts{display:flex;flex-wrap:wrap;gap:7px}
+.opt{font-family:var(--mono);font-size:11.5px;padding:6px 11px;border:1px solid var(--rule);
+  border-radius:var(--r);background:var(--paper);color:var(--ink-2);cursor:pointer}
+.opt[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.dsum{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden;
+  position:sticky;top:18px}
+.dsum h4{font-size:11px;font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase;
+  color:var(--mute);padding:12px 15px;border-bottom:1px solid var(--rule-2);margin:0}
+.dsum pre{border-radius:0;font-size:11.5px;line-height:1.75}
+.dsum .foot{padding:13px 15px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--rule-2)}
+.dsum .foot b{color:var(--accent)}
+
+footer{background:var(--dark);color:var(--dark-mute);padding:32px 0;font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+footer a{color:#B9BCC1;border-bottom-color:#3A3E45}
+footer a:hover{color:#E9E7E1;border-bottom-color:#8D9299}
+
+@media(max-width:940px){
+  .pipe{grid-template-columns:1fr}
+  .prail{border-right:0;border-bottom:1px solid var(--rule);display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(142px,1fr))}
+  .pbtn{min-width:0}
+  .pbtn span{min-width:0;overflow-wrap:break-word}
+  .pbtn[aria-selected=true]{box-shadow:inset 0 -2px 0 var(--accent)}
+  .ex,.cost,.rc,.dec{grid-template-columns:1fr}
+  .dsum{position:static}
+  .lrow{grid-template-columns:26px 1fr 22px}
+  .lref,.ldate{display:none}
+}
+@media(max-width:560px){
+  .wrap{padding:0 18px}
+  section{padding:50px 0}
+  .ppane{padding:18px}
+  .trap{grid-template-columns:1fr;gap:4px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="mastbar">
+      <div class="brand">
+        <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"></path></svg>
+        Claude Code · skill proposal
+      </div>
+      <div class="meta">2026-09-03</div>
+    </div>
+    <h1>One keystroke, <em>one landing page</em>, rebuilt in Framer.</h1>
+    <p class="lede">Nine past sessions ran the same build. Same phrasing, same phases, and the same
+    traps rediscovered from scratch each time. This turns that into a skill Raycast can fire, so the
+    only thing left to type is the reference.</p>
+    <div class="keycombo"><b>;</b>create-template<span class="cur"></span></div>
+    <div class="stats" id="stats"></div>
+    <nav class="jump" id="jump"></nav>
+  </div>
+</header>
+
+<!-- 01 -->
+<section id="chats">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M229.66,218.34l-50.06-50.06a88.21,88.21,0,1,0-11.32,11.32l50.06,50.06a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>01 <i>/ what I found</i></div>
+    <h2>Nine sessions, one recipe</h2>
+    <p class="sub">I searched every session transcript in <code>~/.claude/projects</code> for
+    <code>@framer/agent</code> — 91 sessions, 1.7&nbsp;GB. Sixteen mention the CLI more than twenty
+    times; nine of those are actual "rebuild this page in Framer" builds. Click any row for the
+    verbatim brief and what it settled.</p>
+    <div class="ledger" id="ledger"></div>
+    <p class="sub" style="margin-top:20px">The wording barely moves between them. That stability is
+    the argument for a skill: the brief is already a template, it just lives in your head and gets
+    retyped every time.</p>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="rejections">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128A104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"></path></svg>02 <i>/ the pattern in the pushback</i></div>
+    <h2>Every v1 was rejected for the same reason</h2>
+    <p class="sub">I pulled every message where you pushed back — 60-odd across the nine sessions.
+    Sorted, they are almost never about layout, colour or copy. They are about <b>interaction,
+    motion and asset quality</b>. Structurally correct pages got rejected anyway. There is a
+    technical reason for that, and it is fixable.</p>
+
+    <div class="cause">
+      <h3><svg viewBox="0 0 256 256"><path d="M164,80a36,36,0,1,1-36-36A36,36,0,0,1,164,80Zm-36,64a36,36,0,1,0,36,36A36,36,0,0,0,128,144Z"></path></svg>Root cause</h3>
+      <p><b style="color:#fff">Variant interactions written through the Framer agent API are silently
+      dropped at publish.</b> Not rejected, not warned about — they serialize back correctly and then
+      simply are not in the published page. That is why "everything is non-functional" kept being
+      true even when the canvas looked right.</p>
+      <div class="proof">Probe: a minimal 2-variant component using Framer's own documented
+<b>onTap.0.action="SET_VARIANT"  onTap.0.controls.variant="cycle"</b>
+serialize readback  →  <b>handler present</b>
+published element   →  <b>hover handlers only. no click handler at all.</b></div>
+      <p class="fix">So the skill treats the interaction layer as <b>code components</b>, not DSL
+      variant handlers — and proves each one by driving the published page with a real browser before
+      reporting anything as working. Three more findings compound it: 125 appear-effects were on
+      <code>onMount</code> (fires once at load, never replays — that is the "not properly fading in
+      and fading out"); <code>loopEffect.repeatType="mirror"</code> counts a <i>half</i> cycle where CSS
+      counts a full one, so a float copied verbatim runs at half speed; and code components render in
+      an isolated iframe on canvas, so a canvas screenshot can never show behaviour.</p>
+    </div>
+
+    <div class="rjbar">
+      <span class="chips" id="rjchips"></span>
+      <span class="trapcount" id="rjcount"></span>
+    </div>
+    <div class="rj" id="rj"></div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="copy">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M216,40H72A16,16,0,0,0,56,56V72H40A16,16,0,0,0,24,88V216a16,16,0,0,0,16,16H184a16,16,0,0,0,16-16V200h16a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM184,216H40V88H184Zm32-32H200V88a16,16,0,0,0-16-16H72V56H216Z"></path></svg>03 <i>/ things it should copy</i></div>
+    <h2>Five things the skill inherits</h2>
+    <p class="sub">These are the parts you keep re-supplying by hand. Each becomes a file the skill
+    reads before it touches anything — the same "one build kit is the ground truth" pattern that made
+    the 23-page Tessera run survive.</p>
+    <div class="buckets" id="buckets"></div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="pipeline">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M104,152a32,32,0,1,0-40,31v49a8,8,0,0,0,16,0V183A32.06,32.06,0,0,0,104,152Zm-32,16a16,16,0,1,1,16-16A16,16,0,0,1,72,168ZM216,88a32,32,0,1,0-40,31v17a8,8,0,0,1-8,8H128a23.84,23.84,0,0,0-8,1.38V119a32,32,0,1,0-16,0v49a8,8,0,0,0,16,0,8,8,0,0,1,8-8h40a24,24,0,0,0,24-24V119A32.06,32.06,0,0,0,216,88ZM112,88a16,16,0,1,1-16,16A16,16,0,0,1,112,88Zm72,16a16,16,0,1,1,16-16A16,16,0,0,1,184,104Z"></path></svg>04 <i>/ the pipeline</i></div>
+    <h2>Twelve phases, this order, every time</h2>
+    <p class="sub">Ordering is not cosmetic. Most of the traps in section 05 are ordering bugs:
+    breakpoints derived the wrong direction, anchors wired before their targets exist, controls set in
+    the same call that created the node. The skill locks the sequence and the gates.</p>
+    <div class="pipe">
+      <div class="prail" id="prail" role="tablist" aria-label="Build phases"></div>
+      <div class="ppane" id="ppane" role="tabpanel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="traps">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128A104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"></path></svg>05 <i>/ the trap library</i></div>
+    <h2>Eighty failures, written down once</h2>
+    <p class="sub">Every one of these cost a debugging round in a past session. They go in
+    <code>references/framer-traps.md</code> and get read before the first edit, so they cost nothing
+    next time. Search or filter.</p>
+    <div class="trapbar">
+      <input id="tq" type="search" placeholder="Search — try &quot;silent&quot;, &quot;breakpoint&quot;, &quot;publish&quot;" aria-label="Search traps">
+      <span class="chips" id="tchips"></span>
+      <span class="trapcount" id="tcount"></span>
+    </div>
+    <div class="traps" id="traplist"></div>
+    <p class="sub" style="font-size:14px;margin-top:16px">Note the <span class="mono">silent</span>
+    group especially. Those are the ones where the API reports success, the readback agrees, and the
+    published page is still wrong — the whole reason "verify on the live URL" is a gate and not a
+    suggestion.</p>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="example">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V88H40V56Zm0,144H40V104H216v96Z"></path></svg>06 <i>/ worked example</i></div>
+    <h2>windmillgrowth.com, actually captured</h2>
+    <p class="sub">I ran phase 01 for real, just now, at all three widths. Everything below is measured
+    output rather than a mock-up: eight sections in identical order at every width, the live palette
+    and type scale read off computed styles. This is the brief the skill hands itself before it opens
+    Framer.</p>
+    <div class="ex">
+      <div>
+        <div class="bptabs" id="bptabs" role="tablist" aria-label="Breakpoint"></div>
+        <div class="shotbox"><div class="frame"><img id="shot" alt="Captured full-page screenshot of windmillgrowth.com"><div class="fade"></div></div></div>
+        <p class="sub" style="font-size:14px;margin-top:12px" id="shotcap"></p>
+      </div>
+      <div class="exside">
+        <div class="panel"><h4>Extracted</h4><div class="pb"><dl class="kv" id="exkv"></dl></div></div>
+        <div class="panel"><h4>Palette</h4><div class="pb"><div class="swatches" id="exsw"></div></div></div>
+        <div class="panel"><h4>Section order &amp; height</h4>
+          <div class="pb" style="padding-top:6px">
+            <table class="sectbl"><thead><tr><th></th><th>Section</th><th style="text-align:right">px</th></tr></thead>
+            <tbody id="exsec"></tbody></table></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section id="cost">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M184,89.57V84c0-25.08-37.83-44-88-44S8,58.92,8,84v40c0,20.89,26.25,37.49,64,42.46V172c0,25.08,37.83,44,88,44s88-18.92,88-44V132C248,111.3,222.58,94.68,184,89.57ZM96,56c41.21,0,72,14.78,72,28s-30.79,28-72,28S24,97.22,24,84,54.79,56,96,56ZM24,124V105.74a179.94,179.94,0,0,0,32,16.55v23.4C36.6,140.19,24,131.42,24,124Zm64,48v-4c2.65.13,5.3.2,8,.2,3.83,0,7.61-.1,11.35-.28a184,184,0,0,0,20.65,3.87V195.4C108.6,190.19,88,181.42,88,172Zm76,28c-3.72,0-7.4-.13-11-.37V176.13A196.13,196.13,0,0,0,164,176a183.74,183.74,0,0,0,24-1.54v23.79A163,163,0,0,1,164,200Zm40-2.6V173.86a179.94,179.94,0,0,0,32-16.55V176C236,183.42,223.4,192.19,204,197.4ZM232,132c0,13.22-30.79,28-72,28-3.72,0-7.4-.13-11-.37C170.61,151.57,184,139,184,124V105.74C213.87,110.19,232,122.27,232,132Z"></path></svg>07 <i>/ what it costs</i></div>
+    <h2>The credit balance is the real blocker</h2>
+    <p class="sub">I checked live pricing with <code>higgsfield generate cost</code>. GPT Image 2 at
+    2k/high is <b>8.5 credits per image</b>. Your balance right now is <b>5.4</b> — one hero costs more
+    than you have. The past builds spent 10 to 170 credits each, so the skill has to be cost-aware by
+    design rather than generous by default.</p>
+    <div class="cost">
+      <div>
+        <table class="costtbl" id="costtbl"></table>
+        <div class="spend"><h4>What the past builds actually spent</h4><div id="spendlist"></div></div>
+        <p class="sub" style="font-size:13.5px;margin-top:16px">Three tricks change the maths, and all
+        three are already proven. A <b>contact sheet</b>: Chairside got six headshots out of one 3:2
+        generation for about 10.5 credits, sliced locally by scanning for the white gutters.
+        <b>Anchor&#8209;then&#8209;propagate</b>: Orbit ran one GPT Image 2 hero at 8.5 and twelve Nano
+        Banana passes at 2 each, every one carrying a cropped panel of the reference. And
+        <code>queryImages</code> stays free — real permanent Unsplash URLs with alt text and a dominant
+        colour, which is what Tessera used for all its photography.</p>
+      </div>
+      <div class="calc">
+        <div class="row"><label for="cmodel">Model</label><select id="cmodel"></select></div>
+        <div class="row"><label for="ccount">Assets — <span id="ccountv" class="mono">8</span></label>
+          <input id="ccount" type="range" min="1" max="28" value="8"></div>
+        <div class="row"><label for="csheet">Contact-sheet slicing</label>
+          <select id="csheet">
+            <option value="1">off — one call per asset</option>
+            <option value="4">4 per sheet</option>
+            <option value="6" selected>6 per sheet — proven on Chairside</option>
+            <option value="9">9 per sheet</option>
+          </select></div>
+        <div class="row"><label for="cbal">Balance</label><input id="cbal" type="number" step="0.1" value="5.4"></div>
+        <div class="out"><div class="big" id="cout">—</div><div class="verdict" id="cverdict"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section id="raycast">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M240,64H16A8,8,0,0,0,8,72V184a8,8,0,0,0,8,8H240a8,8,0,0,0,8-8V72A8,8,0,0,0,240,64Zm-8,112H24V80H232ZM72,112a8,8,0,0,1-8,8H48a8,8,0,0,1,0-16H64A8,8,0,0,1,72,112Zm48,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h16A8,8,0,0,1,120,112Zm48,0a8,8,0,0,1-8,8H144a8,8,0,0,1,0-16h16A8,8,0,0,1,168,112Zm48,0a8,8,0,0,1-8,8H192a8,8,0,0,1,0-16h16A8,8,0,0,1,216,112ZM184,152a8,8,0,0,1-8,8H80a8,8,0,0,1,0-16h96A8,8,0,0,1,184,152Z"></path></svg>08 <i>/ the trigger</i></div>
+    <h2>Two ways in, one skill behind both</h2>
+    <p class="sub">You described the snippet behaviour exactly: press <kbd>;</kbd>, type the keyword,
+    the whole brief fills itself in. That is a Raycast snippet, installed in one click via
+    <code>raycast://snippets/import</code>. The script command is the version for when you would rather
+    not open a terminal first.</p>
+    <div class="rc" id="rc"></div>
+  </div>
+</section>
+
+<!-- 09 -->
+<section id="files">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M216,72H131.31L104,44.69A15.86,15.86,0,0,0,92.69,40H40A16,16,0,0,0,24,56V200.62A15.4,15.4,0,0,0,39.38,216h177.7A14.94,14.94,0,0,0,232,201.08V88A16,16,0,0,0,216,72ZM40,56H92.69l16,16H40Zm176,144H40V88H216Z"></path></svg>09 <i>/ what gets written</i></div>
+    <h2>Where it all lives</h2>
+    <p class="sub">Nothing overwrites the official Framer skill — that one owns the DSL grammar and is
+    regenerated by <code>setup</code> on every <code>session new</code>. The new skill sits on top and
+    orchestrates it, so a Framer CLI update can never clobber your workflow.</p>
+    <div class="tree" id="tree"></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="approve">
+  <div class="wrap">
+    <div class="eyebrow"><svg viewBox="0 0 256 256"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM128,24A104,104,0,1,0,232,128A104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z"></path></svg>10 <i>/ your call</i></div>
+    <h2>Nine defaults to approve or flip</h2>
+    <p class="sub">These are the only choices I could not settle from the transcripts. Tap through them
+    — the panel keeps score. Then say "approved", or name what you changed.</p>
+    <div class="dec">
+      <div class="dlist" id="dlist"></div>
+      <div class="dsum">
+        <h4>Config as approved</h4>
+        <pre id="dpre"></pre>
+        <div class="foot" id="dfoot"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="mono">/create-template — plan v1</span>
+    <span>Mined from nine sessions: Kintsugi · Tessera · Harbor · Foyer · Chairside · Osprey · Orbit · Protocol3 · WDLP shop. Reference pages at <a href="https://landing-page-recreations.vercel.app">landing-page-recreations</a>.</span>
+  </div>
+</footer>
+
+<script>
+/* ═════════ icons ═════════ */
+const ICON={
+ check:'<path d="M128,24A104,104,0,1,0,232,128A104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"></path>',
+ warn:'<path d="M128,24A104,104,0,1,0,232,128A104.11,104.11,0,0,0,128,24Zm-8,56a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm8,104a12,12,0,1,1,12-12A12,12,0,0,1,128,184Z"></path>',
+ term:'<path d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"></path>',
+ img:'<path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"></path>',
+ key:'<path d="M240,64H16A8,8,0,0,0,8,72V184a8,8,0,0,0,8,8H240a8,8,0,0,0,8-8V72A8,8,0,0,0,240,64Zm-8,112H24V80H232Z"></path>',
+ layout:'<path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V88H40V56Zm0,144H40V104H216v96Z"></path>',
+ cursor:'<path d="M169.64,134.33,55.88,99.72a8,8,0,0,1-.29-15.17l152-56A8,8,0,0,1,218,38.44l-56,152a8,8,0,0,1-15.17-.29Z"></path>',
+ car:'<path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path>'
+};
+const svg=k=>'<svg viewBox="0 0 256 256" aria-hidden="true">'+ICON[k]+'</svg>';
+const $=s=>document.querySelector(s);
+
+/* ═════════ masthead ═════════ */
+$('#stats').innerHTML=[['91','sessions searched'],['9','real Framer builds'],['1440/810/390','breakpoints locked'],
+ ['80','traps recorded'],['12','phases, fixed'],['40','pushbacks quoted']]
+ .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+$('#jump').innerHTML=[['chats','01 the nine chats'],['rejections','02 why v1 fails'],['copy','03 what it copies'],
+ ['pipeline','04 pipeline'],['traps','05 traps'],['example','06 worked example'],['cost','07 cost'],
+ ['raycast','08 raycast'],['files','09 files'],['approve','10 approve']]
+ .map(([h,t])=>`<a href="#${h}">${t}</a>`).join('');
+
+/* ═════════ 01 ledger ═════════ */
+const CHATS=[
+{n:1,name:'Kintsugi → Tessera',slug:'f775eaf6',ref:'trykintsugi.com',date:'03 Sep',
+ quote:'make this, https://trykintsugi.com, like the way u made other web pages (look prior chat) where u made this https://landing-page-recreations.vercel.app',
+ note:'The origin. Every later brief points back at this one as the standard.',
+ taught:['"Like the way u made other web pages" <i>is</i> the spec — it means the landing-page-recreations doctrine, which is already written down in that repo\'s README.',
+  'The two-stage rule, in your words: <b>"u make it exactly the same as it is, then we do modifications"</b>. Build the structural replica first, diverge second.',
+  'And the ceiling: <b>"I don\'t want to copy 1:1… steal like an artist"</b> — structure borrowed, copy and palette original.',
+  'The <code>sitemap.xml</code> trick you asked for: scrape it and you find 707 URLs, ~25 real pages behind a homepage.'],
+ built:'27 pages · convex-elements-248204.framer.app · 476 links audited, 0 broken · ~170 credits',
+ tags:['origin','two-stage','sitemap','steal like an artist']},
+{n:2,name:'Harbor',slug:'de4ff139',ref:'…/harbor → Harbor-Template',date:'03 Sep',
+ quote:'make this in framer https://landing-page-recreations.vercel.app/harbor https://framer.com/projects/Harbor-Template--yjMDCiKYSRw1CnUQKaZL-guN7i use framer cli to make this',
+ note:'Shortest brief of the set — two URLs and a tool name. Everything else has to be assumed.',
+ taught:['The minimum viable brief is <b>source URL + Framer project URL + "use framer cli"</b>.',
+  'The source can be your own local HTML recreation. Reading the repo beats scraping the deploy — you get the real CSS tokens, the keyframes and the hover rules.',
+  'This is where the publish-time interaction bug was isolated and proved with a minimal probe.',
+  'Components must be made <i>fluid</i> before breakpoints exist, because component internals cannot be overridden per breakpoint.'],
+ built:'14 sections · 10 components · streamlined-designer-041944.framer.app · 384 transitions on one curve',
+ tags:['minimum brief','local source','components first']},
+{n:3,name:'Foyer',slug:'33d9cbe1',ref:'…/foyer-v2 + …/foyer',date:'03 Sep',
+ quote:'make this in framer, https://landing-page-recreations.vercel.app/foyer-v2, template name Foyer, 1440 px https://framer.com/projects/Favorable-Asparagus--0t1r0dpXvpSp0tF2deXl-5cbow , use framer cli to make this in framer and also this on the second page https://landing-page-recreations.vercel.app/foyer',
+ note:'First brief to name the template and state 1440 outright. Also the first multi-page one.',
+ taught:['<b>Template name</b> is a real input, separate from the reference — it names the project and the page.',
+  'Multiple references map to multiple pages in one project, in the order given.',
+  'Two rejections here, both purely about motion and interaction fidelity. Zero complaints about layout.',
+  'The source\'s own CSS can be booby-trapped: eight tokens are self-referential in light mode and only carry real values in dark. Diff both blocks or you ship a white subhead that should be grey.'],
+ built:'2 pages × 3 breakpoints · 11 code components · favorable-asparagus-304345.framer.app · heights within 1–3% of source',
+ tags:['template name','1440','multi-page','light/dark diff']},
+{n:4,name:'Chairside',slug:'c8bc808e',ref:'dentai.ai + Figma proto',date:'03 Sep',
+ quote:'create this https://www.dentai.ai, also let this load fully and then take an ss of this <figma proto url> and also create this design in framer using framer cli, https://framer.com/projects/Dentist-Template--3UQDgZFYvmE8F8ZF9t2j-2hjiR … use higgsfiled to create image and all',
+ note:'Two sources at once — a live site and a Figma prototype. The proto was the better reference.',
+ taught:['"Let this load fully and then take an ss" — capture needs a real settle wait plus a lazy-load scroll pass, not a bare screenshot.',
+  'When a Figma proto and the live site disagree, build off the richer one. The proto had 11 sections, the live site 7.',
+  'A Figma proto needs <code>--use-gl=swiftshader --enable-unsafe-swiftshader</code>, ~30s to paint, and <code>mouse.wheel</code> — arrow keys do nothing.',
+  'The contact-sheet trick, proven: <b>six headshots out of one generation</b> for ~10.5 credits, sliced locally by scanning for the white gutters.'],
+ built:'2 pages × 3 breakpoints · adorable-concept-027840.framer.app · one navy #244C68 carries the page',
+ tags:['dual source','figma proto','contact sheet']},
+{n:5,name:'Osprey',slug:'08ebef5d',ref:'getastra.com → Template 4',date:'03 Sep',
+ quote:'pls make this exactly like this https://www.getastra.com, https://framer.com/projects/Template-4--Y4rtHR0KQ2JV3Mj6UGF1-4kBPH, in framer like u made for kintsugi and other pages, (check my chat with u regarding https://landing-page-recreations.vercel.app) so generate the graphics using higgsfield cli and alsways attach the reference lol, use 1440px for desktop',
+ note:'The canonical brief. Every clause in it maps to a rule in the skill.',
+ taught:['<b>"always attach the reference"</b> — every Higgsfield call carries <code>--image-references</code>. Osprey did it on all 13 plates with cropped panels of the source.',
+  '"exactly like this" — section order and layout roles 1:1; brand, copy and colour original.',
+  'A supplied Framer link may be an <i>empty</i> project, i.e. the build target, not a second reference. Check before assuming.',
+  'Every prompt carried a reusable brand prefix plus <b>"use the attached reference ONLY for composition and framing; design fresh artwork, do not copy it"</b>.'],
+ built:'9 pages × 3 breakpoints · jazzed-channel-120285.framer.app · 8 components · ~34 credits',
+ tags:['canonical','attach refs','1440','empty target']},
+{n:6,name:'Orbit',slug:'d4884504',ref:'viral.app → Template 5',date:'03 Sep',
+ quote:'pls make this exactly like this viral.app, exactly in framer cli, in framer like u made for kintsugi and other pages … so generate the graphics using higgsfield cli and alsways attach the reference lol, use 1440px for desktop',
+ note:'The same brief again, near-verbatim. That repetition is the whole argument for a skill.',
+ taught:['"exactly in framer cli" — the CLI, never the Framer MCP.',
+  'The breakpoint direction rule, found by A/B test in one session: tablet derived from the 1440 primary publishes an impossible media query; derived from the 390 phone it works.',
+  'Copy the reference\'s <i>measured</i> mechanism, not an invented one. You measured that viral.app grows the inner image ~3% and never moves the card.',
+  'Palette lifted verbatim from the reference\'s computed CSS custom properties — not eyeballed off a screenshot.'],
+ built:'10 pages × 3 breakpoints · regular-hiring-471753.framer.app · CMS blog · ~30 credits',
+ tags:['CLI only','narrow→wide','measured motion']},
+{n:7,name:'WDLP shop',slug:'5ce52cae',ref:'~60-page Figma → /shop',date:'03 Sep',
+ quote:'…recreate those pages, not similarly, but in a much better way if you can… Create 10 subagents, if possible, and after you have created each individual subcategory landing page, which is mobile-optimized as well, include all other shit, like cool shit.',
+ note:'The scale case — many pages, one project, fanned out across subagents.',
+ taught:['"not similarly, but in a much better way" — the reference is a floor, not a ceiling.',
+  'This is where the <b>19 AI tells</b> and the <b>niche DNA rule</b> came from, and where you said to write them into CLAUDE.md so they stop repeating.',
+  'One build kit is the contract. Every agent reads it first; it grew from 217 to 347 lines during the run and got saved outside the scratchpad so it survived.',
+  'Fan-out is capped by the session limit — ~14 concurrent per key. Waves of six, one session each, destroyed on exit. Two API-quota wipeouts forced "pairs max, deterministic passes in the main loop".'],
+ built:'14 shop pages × 3 breakpoints · wedesignlandingpages.com/shop · 1,650 responsive overrides',
+ tags:['scale','subagents','19 AI tells','niche DNA']},
+{n:8,name:'Protocol3',slug:'67e5c151',ref:'Figma → Protocol by Opus',date:'17 Aug',
+ quote:'pls create this figma design <figma url> in framer project fr <framer url> using figma\'s cli and framer\'s cli or mcp idk which is better, framer mcp is def shitty use cli only LOL',
+ note:'Where the CLI-over-MCP rule got set, in your own words.',
+ taught:['<b>"framer mcp is def shitty use cli only"</b> — settled. The skill never reaches for the Framer MCP.',
+  'Figma is read through the Figma MCP with <code>clientFrameworks:"framer-canvas-dsl"</code>, which makes <code>get_design_context</code> emit Framer DSL directly, per section node.',
+  '<code>get_variable_defs</code> returns a flat token map that <i>is</i> the design system — transcribe it as the first <code>applyChanges</code>.',
+  'At scale, MCP loses to the Figma REST API: <code>get_metadata</code> on a page root blew the token cap at 117k chars.'],
+ built:'7 sections at 1440 · Protocol-by-Opus · naming convention &lt;Template&gt;-by-Opus',
+ tags:['CLI only','figma input','token map']},
+{n:9,name:'Shop continuation',slug:'b2a7322b',ref:'"let\'s create other pages"',date:'03 Sep',
+ quote:'let\'s create other pages … All 23 pages',
+ note:'The follow-on turn. Where the multi-page mechanics got hardened.',
+ taught:['Create <b>every page shell first</b> so nav links resolve, then build content. Anchors and cross-page links error otherwise.',
+  'Turn nav + footer into a <code>LayoutTemplateNode</code> <i>before</i> a second page exists.',
+  'A Python section library keeps 23 pages congruent — one function per section archetype.',
+  'Temp ids are project-global. Reusing a bare temp id across pages silently re-parented 150+ sections and scrambled ten pages. Suffix every temp id with the page slug.'],
+ built:'23 nav pages + blog/guides CMS · Site Shell layout template · 27 colour tokens',
+ tags:['page shells first','layout template','temp id collision']}
+];
+const lg=$('#ledger');
+CHATS.forEach(c=>{
+  const btn=document.createElement('button');
+  btn.className='lrow';btn.type='button';btn.setAttribute('aria-expanded','false');
+  btn.innerHTML=`<span class="lnum">${String(c.n).padStart(2,'0')}</span>
+    <span class="lname">${c.name}<s>${c.slug}</s></span>
+    <span class="lref">${c.ref}</span><span class="ldate">${c.date}</span>
+    <svg class="lcar" viewBox="0 0 256 256">${ICON.car}</svg>`;
+  const det=document.createElement('div');det.className='ldet';
+  det.innerHTML=`<p class="sub" style="font-size:14.5px;margin-top:14px">${c.note}</p>
+    <div class="quote">${c.quote.replace(/</g,'&lt;')}</div>
+    <ul class="taught">${c.taught.map(t=>`<li>${svg('check')}<span>${t}</span></li>`).join('')}</ul>
+    <div class="built">shipped → ${c.built}</div>
+    <div class="tags">${c.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`;
+  btn.onclick=()=>{const open=btn.getAttribute('aria-expanded')==='true';
+    lg.querySelectorAll('.lrow').forEach(b=>b.setAttribute('aria-expanded','false'));
+    lg.querySelectorAll('.ldet').forEach(d=>d.classList.remove('on'));
+    if(!open){btn.setAttribute('aria-expanded','true');det.classList.add('on');}};
+  lg.append(btn,det);
+});
+
+/* ═════════ 02 rejections ═════════ */
+const REJ=[
+{k:'interaction',h:'Interaction fidelity',n:'the #1 cause',
+ demand:'<b>Interactions get built as code components and proved on the published page</b> — never DSL variant handlers, never "the canvas looks right".',
+ q:['Everything is non-functional, non-utility.',
+   'there are no interactions on this website, so it looks hella weird. There must be a lot of interaction elements, animation, events, and moving parts',
+   'When I scroll the component, the second component, which is a document, should change its scroll thingy… but it is not doing that interactively.',
+   'when hovering over the cards, the card size shouldn\'t increase see the original interaction from viral.app, the image size increases not the card size',
+   'each has a distinct animation altogether, which is not present in the Framer card that you have just made',
+   'when I\'m trying to do the interactive element thingy and change that toggle, it is not changing and transforming from one position of the original component to another. It is not accurate at all.',
+   'The component needs to be precise. The interactivity needs to be precise. The animations need to be on point. Everything needs to be one point. There needs to be a lot of congruency all across the pages.',
+   'Whenever I click on the "Bengaluru" and "Popular Gatherings in Bengaluru", it is not showing me a pop-up that it was showing in the original creation itself.',
+   'Did you add all the animations as well as interactivity and interactions?']},
+{k:'motion',h:'Motion quality',n:'measured, not vibed',
+ demand:'<b>Every effect axis stated explicitly, timing measured against the source, no idle animation that has not earned its place.</b>',
+ q:['wtf are dancing pills on the hero section jesus, looks so ugly',
+   'why are the cards rotating? looks like shit bruh',
+   'The cards are floating at a slower speed in yours, but the one I have created is floating at a good speed.',
+   'get rid of the lines on the ticker section… and slow down the speed of the ticker section a bit so it looks in alignment with the floaty cards thingy.',
+   'It is not properly fading in and fading out, so interactivity, customizability, and consistency are not accurate',
+   'add more works and get rid of the hover increase in size effect on works, the color change looks fine']},
+{k:'assets',h:'Asset quality',n:'sharpness is binary',
+ demand:'<b>Generate hero-scale art at hero scale, verify every asset renders before uploading, and size frames to the asset\'s true aspect ratio.</b>',
+ q:['why is the avatar low quality and the pills dancing',
+   'The Figma icon, PayPal icon, Stripe icon, and Gmail icon are not properly displayable.',
+   'Why is the card you made so ugly? Even the logo is super ugly.',
+   'Look for the components online for the globe, but not because the stuff that you generated is low quality and is not up to par with the quality I expect you to make.',
+   'Use Higgs Field AI to generate logos, take a screenshot of the original reference provided to you, and use this as a reference to generate an image.',
+   'lets\' use something from this, outline it in black obv and not blue fill colors, but like attach this as reference it will generate good results']},
+{k:'responsive',h:'Responsive',n:'phone is never optional',
+ demand:'<b>All three breakpoints on anything, always. Verified on the published URL at each width, not from the canvas.</b>',
+ q:['bro why no tablet and mobile view? make it',
+   'make for mobile and tablet pls as well',
+   'I hope you made it responsive on mobile so everything is properly visible, because I can see a lot of cards are getting cut off. Also, the button and all are not showing properly.',
+   'What host says section is also getting cut off. Please fix this.',
+   'highlighter is getting cut from a lot of places',
+   'why is variation b 1200px? it should be 1440px']},
+{k:'brand',h:'Brand discipline',n:'niche DNA',
+ demand:'<b>One locked type system and palette per niche, researched against US-market references, before any page is built.</b>',
+ q:['Terrible font choice on the real estate page… using Instrument Serif instead of Bodoni Moda, Medical one should look more medical. Why do you use green?',
+   'Have a consistent font for each particular niche that should align with itself and also the color palette.',
+   'we are targeting US markets, so the thinking process and cultural nuances should be embedded in the context',
+   'why is get my template button fully rounded? that\'s not brand aligned, also it\'s left pinned? it should be bottom pinned only, and at center only',
+   'after writing the company name, is giving me very much AI slop vibes. Please get rid of it',
+   'this big navbar? are you fucking kidding me?, This is supposed to be a landing page subpage']},
+{k:'verdict',h:'Blunt verdicts',n:'the ones with no detail',
+ demand:'<b>These are the cost of shipping unverified. Each one means a full rework round that a gate would have caught.</b>',
+ q:['BRO WHAT IS THIS BULLSHIT?',
+   'looks like shit, improve it',
+   'The construction website does not look great at all, bro! It looks so shitty. I cannot tell you how shitty it looks.',
+   'idk bro but for some reason i feel like it look so shitty',
+   'I think you have not done a good job and not a responsible one, at least to my understanding. It is rather very sloppy work.',
+   'there are a lot of mistakes i can notice',
+   'what u made is very sloppy work']}
+];
+let rjActive=null;
+$('#rjchips').innerHTML=REJ.map(g=>`<button class="chip" type="button" data-k="${g.k}" aria-pressed="false">${g.h.toLowerCase()}</button>`).join('');
+$('#rjchips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;
+  rjActive=rjActive===b.dataset.k?null:b.dataset.k;
+  $('#rjchips').querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.k===rjActive)));
+  drawRej();};
+function drawRej(){
+  const gs=REJ.filter(g=>!rjActive||g.k===rjActive);
+  $('#rjcount').textContent=`${gs.reduce((a,g)=>a+g.q.length,0)} of ${REJ.reduce((a,g)=>a+g.q.length,0)} quoted`;
+  $('#rj').innerHTML=gs.map(g=>`<div class="rjgroup">
+    <h4>${g.h}<s>${g.n}</s></h4>
+    <div class="demand">${g.demand}</div>
+    <ul>${g.q.map(q=>`<li>${q.replace(/</g,'&lt;')}</li>`).join('')}</ul></div>`).join('');
+}
+drawRej();
+
+/* ═════════ 03 buckets ═════════ */
+$('#buckets').innerHTML=[
+{icon:'term',h:'A · The brief you always type',c:'8 recurring clauses',items:[
+ '<b>"exactly like this"</b> → section order and layout roles 1:1.',
+ '<b>"in framer using framer cli"</b> → CLI only. Never the Framer MCP.',
+ '<b>"1440px for desktop"</b> → primary 1440, plus 810 and 390.',
+ '<b>"higgsfield cli"</b> → Higgsfield is the image source. No stock, no placeholder boxes.',
+ '<b>"always attach the reference"</b> → every generation call carries an image reference.',
+ '<b>"like u made for kintsugi"</b> → the recreations doctrine applies.',
+ '<b>template name</b> → names the project, the page and the asset folder.',
+ '<b>"then we do modifications"</b> → replica first, divergence second.']},
+{icon:'layout',h:'B · The build doctrine',c:'recreations README + your standards',items:[
+ 'Solid flat colour only. A reference gradient panel becomes a flat solid.',
+ 'One accent per page. Never purple by default.',
+ 'Radius discipline — sharp 0–4px, or one consistent small value.',
+ 'Original brand and copy. Structure borrowed, words never.',
+ 'Every interactive element actually works.',
+ 'The page moves: appear on scroll, hover, parallax, loop.',
+ 'Real numbers. Testimonials with name, city, business, outcome. CTAs that name the outcome.',
+ 'The 19 AI tells are a hard negative prompt, checked at plan time.']},
+{icon:'cursor',h:'C · The interaction contract',c:'the new one — section 02',items:[
+ 'Interactions are <b>code components</b>, not DSL variant handlers.',
+ 'Appear effects use <code>onInView</code>, never <code>onMount</code>.',
+ 'Every effect axis stated: x, y, scale, rotate, rotateX/Y, skewX/Y, opacity.',
+ '<code>mirror</code> loop duration is a half cycle — halve any CSS number you copy.',
+ 'Measure the reference\'s mechanism, then reproduce that.',
+ 'Prove it with real pointer events on the published page. <code>element.click()</code> does nothing.']},
+{icon:'warn',h:'D · The trap library',c:'80 entries, section 05',items:[
+ 'Silent failures — the API says fine, the page is wrong.',
+ 'Ordering — breakpoints narrow-to-wide, controls in a second pass.',
+ 'Verification — canvas reads lie about replicas.',
+ 'Layout — image fill on the sized frame, no % on variant roots.',
+ 'Session hygiene — one session, destroyed on exit, waves of six.']},
+{icon:'img',h:'E · The image contract',c:'model IDs + live costs',items:[
+ '<code>--image-references</code> repeatable, up to 14 on Nano Banana Pro.',
+ 'Anchor-then-propagate — one good image, siblings reference it.',
+ 'Contact sheets — one call, sliced into 4–9 assets locally.',
+ 'Reference for <i>composition only</i>; never feed third-party logos.',
+ 'Name a ratio for stroke weight. Adjectives are ignored.',
+ 'Pro plan caps at 4 concurrent jobs; the 5th fails with exit code 0.']}
+].map(b=>`<div class="bucket"><h3>${svg(b.icon)}${b.h}</h3><div class="cnt">${b.c}</div>
+  <ul>${b.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('');
+
+/* ═════════ 04 pipeline ═════════ */
+const PHASES=[
+{n:'00',t:'Preflight',meta:'~30s · no writes',
+ p:'Prove the tools work and the inputs are complete before anything is created. This phase never edits a project.',
+ code:`<span class="c"># mandatory before the official framer skill loads</span>
+npx @framer/agent@latest setup
+
+<span class="c"># credits, and what this build will cost</span>
+higgsfield account status
+higgsfield generate cost gpt_image_2 <span class="k">--prompt</span> t <span class="k">--aspect_ratio</span> 16:9 <span class="k">--resolution</span> 2k
+higgsfield model list <span class="k">--json</span>   <span class="c"># IDs drift — never hardcode them</span>`,
+ li:['Resolve the reference into one of four kinds: <b>live URL</b>, <b>local image</b>, <b>Figma node URL</b>, or <b>your own recreation page</b>.',
+  'If it is a live site, also try <code>/sitemap.xml</code> — that is how Kintsugi turned out to have 25 real pages.',
+  'Template name from you, or derived from the domain and stated.',
+  'Target: a new Framer project by default, or the project URL you passed. A supplied project may be <i>empty</i> — that means it is the target, not a second reference.',
+  'Estimate the image budget and print it.'],
+ gate:'Hard gate: model IDs move. <code>nano_banana_2</code> worked in the past builds and is gone from today\'s catalogue. Always resolve names from <code>model list</code> before spending.'},
+{n:'01',t:'Capture the reference',meta:'~40s · 3 widths',
+ p:'One script, three widths, real settle time and a lazy-load scroll pass. Output is three full-page PNGs plus a machine-readable design extract.',
+ code:`node <span class="s">scripts/capture-reference.mjs</span> https://windmillgrowth.com \\
+     <span class="s">./ref/windmill</span> 1440,810,390
+<span class="c"># ref/windmill/w1440.png  w810.png  w390.png  extract.json</span>
+
+<span class="c"># cheap first pass, no browser at all</span>
+curl -sL -A <span class="s">"Mozilla/5.0 …"</span> https://windmillgrowth.com -o home.html
+curl -sL https://windmillgrowth.com/sitemap.xml | grep -oE <span class="s">'&lt;loc&gt;[^&lt;]+'</span></code>`,
+ li:['<code>chrome-headless-shell</code> over CDP with a throwaway <code>--user-data-dir</code> every run — never a signed-in profile, so it can never act as anyone.',
+  '6.5s settle, then a scroll pass at 600px steps to fire lazy images and scroll reveals, then capture with <code>captureBeyondViewport</code>.',
+  'Kill cookie banners and chat widgets with an injected stylesheet <i>before</i> the wait, or they sit in every frame.',
+  'A Figma proto needs <code>--use-gl=swiftshader --enable-unsafe-swiftshader</code>, ~30s to paint, and <code>mouse.wheel</code> in ~920px steps.',
+  'Where a DOM is not available, sample pixels for the palette. Chrome\'s computed <code>lab()</code> is D50, not D65 — converting with a D65 matrix put one brand blue ten points off.'],
+ gate:'Verified live on windmillgrowth.com while writing this plan — 18,567px tall at 1440, eight sections found at all three widths. Section 06.'},
+{n:'02',t:'Study, then write the plan',meta:'~2 min · no writes',
+ p:'The extract becomes a written design plan before a single node is created. This is the step that stops mid-build improvisation.',
+ code:`<span class="c"># extract.json already carries, per width:</span>
+sections[]   <span class="c">tag, class, height, bg, headings, img + link counts</span>
+fonts[]      <span class="c">ranked by real usage</span>
+fontSizes[]  <span class="c">the actual type scale</span>
+textColors[] backgrounds[] radii[]`,
+ li:['Section-by-section table: role, height, contents, Framer equivalent.',
+  'Palette reduced to one accent plus neutrals, lifted from computed CSS custom properties rather than eyeballed.',
+  'Type mapped to a preset set — never inline typography, which is rejected once a preset is set.',
+  'Motion inventory: what actually animates on the reference, measured. Not guessed.',
+  'Niche DNA applied — one locked type system and palette for the industry, researched against five US references.'],
+ gate:'The 19 AI tells are checked <b>here</b>, at plan time, not after the page exists.'},
+{n:'03',t:'Open the Framer project',meta:'~30s · one session',
+ p:'Exactly one session for the whole build, destroyed on the way out. The official Framer skill owns the DSL; this phase just gets us pointed at the right project.',
+ code:`<span class="c"># default: a fresh project</span>
+npx @framer/agent@latest project new
+npx @framer/agent@latest session new <span class="s">"&lt;projectId&gt;"</span> | tail -1
+
+<span class="c"># then read the generated task map</span>
+cat ~/.claude/skills/framer/projects/&lt;id&gt;/index.md
+cat …/prompt/{core-principles,critical-reminders,updating-the-project}.md`,
+ li:['Follow the task map\'s <b>Anything</b> row, then <b>Pages</b>, <b>Responsive breakpoints</b>, <b>Components</b>, <b>Publish</b>.',
+  '<code>project-inventory.md</code> before touching any project ID, page path or preset name.',
+  'Never <code>remix</code> unless you ask — that duplicates someone else\'s project.',
+  'Session cap is ~14 concurrent per API key across all agents. One session here; waves of six when fanning out, pairs when quota is tight.',
+  '<code>state</code> persists across <code>exec</code> calls — keep the token map, asset map and breakpoint ids there, and mirror them to disk because state can be lost.'],
+ gate:'<code>session destroy</code> runs in phase 11 even if the build fails. A leaked session eats the cap for every later run.'},
+{n:'04',t:'Design system first',meta:'~2 min · one call',
+ p:'Colour tokens and text presets before any node exists, or you hand-edit hexes for the rest of the build.',
+ code:`<span class="c"># one applyChanges, in this order</span>
++ColorStyleTokenNode tokInk name=<span class="s">"Ink"</span> light=<span class="s">"#0B1220"</span> dark=<span class="s">"#F4F2ED"</span>;
++TextStylePresetNode tsH1 …;
++LinkStylePresetNode …;
+SET &lt;desktopBp&gt; name=<span class="s">"Desktop"</span> width=<span class="s">"1440px"</span>;
+
+<span class="c"># then reference them, never a raw hex in a section</span>
+fill=<span class="s">"var(--token-\${state.tok.tokInk})"</span>`,
+ li:['Text-preset breakpoint slots are added <b>in order</b> — <code>medium</code> before <code>small</code> — each needs an explicit <code>minWidth</code>, and they resolve at <i>publish</i> time, so the canvas cannot verify them.',
+  'Creating page breakpoints later <b>realigns the preset default breakpoint</b>, so the slots must be rebuilt afterwards.',
+  'Font check first: <code>readProject([{type:"font-search",name:"Geist"}])</code>. The live reference may render a font Framer does not have — Haffer is installed on your Mac, so a source page uses it and Framer has to fall back.',
+  'Icon check too: <code>readIcons({iconSetName:"Phosphor"})</code> returns all 1512 names. Grep locally; a wrong name fails the whole insert.',
+  'Colour tokens are project-global; component colours are stored <b>per instance</b>. Duplicating a page for a palette variant gives each copy its own colours.'],
+ gate:'Correct heading architecture: font properties on the <b>RichTextNode</b> (it has a compound replica id, so it is breakpoint-overridable); colour, highlight and decoration on the <b>runs</b>. Never <code>fontSize</code> on a run — setting it to <code>null</code> strips all run styling and merges adjacent runs, unrecoverably.'},
+{n:'05',t:'Components before sections',meta:'the reusable layer',
+ p:'Every component built, screenshotted, looked at, and made fluid before a single section uses it.',
+ code:`<span class="c"># hover lives on a gesture variant, not hoverEffect,
+# because hoverEffect is rejected on a variant root</span>
+CREATE_VARIANT btnHover from=<span class="s">"&lt;buttonRoot&gt;"</span> gesture=<span class="s">"hover"</span>;
+
+<span class="c"># screenshot a component by instancing it on a
+# non-routed DesignPageNode — definitions paint blank</span>`,
+ li:['<b>Components must be fluid before breakpoints exist</b>, because component internals cannot be overridden per page breakpoint. <code>stackWrapEnabled="true"</code> plus child <code>minWidth</code> small enough for 390.',
+  'A variant root cannot be <code>width="100%"</code> or <code>1fr</code>. A component with a fixed 1200px root does not shrink on phone — the right column renders off-screen.',
+  'Two variants with the same name break <code>$control__variant</code>; it resolves to the first match. Bind instances by variant <b>id</b>.',
+  '<code>readProject({type:"screenshot", id:&lt;variantId&gt;})</code> throws inside a definition, and a temporary visibility test on the definition <b>wipes the variant overrides</b>.'],
+ gate:'Create nodes bare, then <code>SET</code> every control, binding and link in a <b>second</b> pass. The <code>+Node</code> command silently drops whole attribute classes — <code>$control__*</code>, CMS bindings and <code>link.href</code> all report zero errors and render wrong.'},
+{n:'06',t:'Graphics — references attached',meta:'cost-gated · run in background',
+ p:'Your standing rule, mechanised: nothing gets generated blind. Fire this early and let it run while the design system is built.',
+ code:`<span class="c"># 1 — the anchor, from a cropped panel of the reference</span>
+higgsfield generate create gpt_image_2 <span class="k">--prompt</span> <span class="s">"$(cat prompt-hero.txt)"</span> \\
+  <span class="k">--image-references</span> ref/windmill/crop-hero.png \\
+  <span class="k">--aspect_ratio</span> 2:3 <span class="k">--quality</span> high <span class="k">--resolution</span> 2k <span class="k">--wait</span> <span class="k">--json</span>
+
+<span class="c"># 2 — every sibling references the anchor (2 credits, not 8.5)</span>
+higgsfield generate create nano_banana_pro <span class="k">--prompt</span> <span class="s">"…"</span> \\
+  <span class="k">--image-references</span> out/anchor.png \\
+  <span class="k">--image-references</span> ref/windmill/crop-hero.png <span class="k">--wait</span></code>`,
+ li:['Every prompt carries a brand prefix plus <b>"use the attached reference ONLY for composition and framing; design fresh artwork, do not copy it"</b>. Never feed a sheet of third-party logos.',
+  'Generate hero-scale art <b>at hero scale</b>. A hero taken as one quadrant of a 2×2 grid gave 403×879 of real subject; regenerated alone at 2:3 it gave 854×1949.',
+  'Name a <b>ratio</b> for stroke weight — "roughly one twelfth as thick as the mark is wide". Adjectives are ignored.',
+  '<code>--background transparent</code> on GPT Image 2 gives a real cutout and skips rembg entirely, along with its stray-edge-alpha bug.',
+  '<code>--wait --json</code> returns objects with <code>result_url</code>; <code>--json</code> <i>without</i> <code>--wait</code> returns a bare array of id strings. That difference silently broke a submit script.',
+  'Pro plan caps at <b>4 concurrent jobs</b>. The fifth returns <code>rate_limit_reached</code> as plain text with exit code 0, so a naive script saves an error page as a PNG. Verify with <code>file</code>.'],
+ gate:'Upload path: <code>framer.uploadImage({image:"data:image/png;base64,…"})</code>. Passing <code>{bytes:Uint8Array}</code> fails on a cross-realm check even with a mimeType. A public URL also works.'},
+{n:'07',t:'Sections, top to bottom',meta:'the bulk of the work',
+ p:'One section per applyChanges at the primary width only, and each one is looked at before the next begins.',
+ code:`<span class="c"># the loop that actually catches mistakes</span>
+build section  →  readProject screenshot &lt;sectionId&gt;
+               →  curl the jpg  →  PIL slice  →  Read it
+               →  fix  →  re-shoot`,
+ li:['<code>framer.screenshot</code> refuses anything taller than 16,384px. Screenshot per section, and slice tall captures into side-by-side strips so a whole page fits one readable image.',
+  'A sticky nav renders over every per-node screenshot — crop from a full-page capture instead.',
+  'Never instance <code>footer_1</code> (<code>X5hCOEKMi</code>) — an unconfigured placeholder that renders a "tilebit" logo and lorem ipsum.',
+  'Escape double quotes in DSL text globally. One unescaped quote silently wipes the whole line.',
+  'Suffix every temp id with the page slug. Temp ids are project-global; a reused one silently re-parented 150+ sections across ten pages.'],
+ gate:'No anchor links in this phase. They normalise away silently if the target does not already carry <code>scrollTargetEnabled="true"</code> and an <code>elementId</code>.'},
+{n:'08',t:'Breakpoints, narrow to wide',meta:'ordering critical',
+ p:'The single most expensive lesson in the transcripts. Direction matters, and getting it wrong publishes a media query that can never be true.',
+ code:`<span class="c">1440 primary → create 390 phone → derive 810 tablet FROM the 390</span>
+
+CREATE_VARIANT ph from=<span class="s">"&lt;1440 primary&gt;"</span>;
+<span class="c">--- separate call, width alone ---</span>
+SET &lt;ph&gt; width=<span class="s">"390px"</span>;
+CREATE_VARIANT tb from=<span class="s">"&lt;the 390 replica&gt;"</span>;
+SET &lt;tb&gt; width=<span class="s">"810px"</span>;
+
+<span class="c"># self-heal: if the rect is wrong, DEL and re-derive</span>
+if ((await framer.agent.getRect({id:TB})).width !== 810) …`,
+ li:['Derived from the 1440 primary, a new tablet keeps a 1440 rect and publishes as <code>@media (min-width:1440px) and (max-width:1439.98px)</code> — never true, so phone layout shows at 810.',
+  '<code>CREATE_VARIANT</code> returns <b>no usable id</b> in <code>renamedIds</code>. Discover the new breakpoint from <code>getNode({id:&lt;pageNode&gt;}).$breakpoints</code> and diff.',
+  'Override syntax is the compound replica id — breakpoint id concatenated with node id, no separator.',
+  '<b>Replica overrides equal to the attribute default are silently not stored.</b> <code>opacity="1"</code>, <code>visible="true"</code>, <code>scale="1"</code> all vanish. Use sentinels: <code>0.999</code>.',
+  'Cost of narrow-to-wide: the tablet inherits every phone override. Budget one full re-override pass — grids back to two columns, cards back to horizontal, hidden columns back on.'],
+ gate:'Always grep the published HTML for your breakpoint values. The project model reports the correct <code>mediaQueryRange</code> while the CSS is wrong, and a stale breakpoint cannot be repaired — <code>DEL</code> and recreate.'},
+{n:'09',t:'Interaction layer',meta:'code components · the fix for section 02',
+ p:'Everything that has to respond to a click, a scroll or a hover-with-state is built as a code component, because DSL variant handlers do not survive publish.',
+ code:`const f = await framer.createCodeFile(<span class="s">"Interactions.tsx"</span>, code);
+await f.typecheck();          <span class="c">// ALWAYS before publish</span>
+<span class="c">// update later:</span>
+(await framer.getCodeFile(<span class="s">"codeFile/xxx"</span>)).setFileContent(code);
+
+<span class="c">// instance it</span>
++ComponentInstanceNode inst component=<span class="s">"codeFile/xxx:default"</span> …;`,
+ li:['Framer emits design tokens as <code>--token-&lt;uuid&gt;</code> custom properties on <code>body</code>, switched by a <code>prefers-color-scheme</code> query. A code component can read and override them — that is how a real theme toggle works.',
+  '<code>position:fixed</code> inside a transformed ancestor is contained by that ancestor. Framer\'s scroll-reveal adds transforms, which is why a popup rendered at <code>top:874</code> in a 900px viewport. Portal to <code>document.body</code>.',
+  'Framer parks appear animations as WAAPI animations with <code>fill:backwards</code> stuck running, and a running WAAPI animation overrides inline styles <i>and</i> <code>!important</code>. Cancel surgically on state change, never at boot.',
+  'Breakpoints inside a code component are plain CSS media queries in a <code>&lt;style&gt;</code> tag, which sidesteps the whole replica-override problem.',
+  '<code>RenderTarget.current() === RenderTarget.canvas → return null</code> keeps heavy chrome off the canvas.'],
+ gate:'Code components render in an isolated iframe on canvas, so a canvas screenshot shows a static placeholder, never behaviour. Publish is the only honest check.'},
+{n:'10',t:'Publish → drive → repeat',meta:'the inner loop, not the finale',
+ p:'Publish is a verification tool. The past builds ran it 20 to 43 times each. Nothing is trusted until it is live and has been driven with real pointer events.',
+ code:`<span class="c"># two-step handshake</span>
+const p = await framer.agent.publish({action:<span class="s">"preview"</span>});
+const c = await framer.agent.publish({action:<span class="s">"confirm_publish"</span>,
+            confirmationHash: p.confirmationHash ?? p.nextAction.confirmationHash});
+
+<span class="c"># then the check that catches the impossible media query</span>
+curl -sL <span class="s">"$URL"</span> | grep -oE <span class="s">'min-width:[0-9.]+px'</span> | sort -u
+<span class="c"># and horizontal overflow at 9 widths</span>
+node scripts/verify-live.mjs <span class="s">"$URL"</span> 1600,1440,1280,1024,810,768,430,390,360`,
+ li:['Framer serves an <b>empty shell on a cold fetch</b>. Retry until the body is real — a 400KB threshold worked — or you will report a working page as broken.',
+  'Drive taps with <code>mouse.down()/up()</code>. <code>element.click()</code> does nothing on Framer tap handlers, and a test using it reported a working switcher and FAQ as broken.',
+  'Scroll with the real scroll action too. Programmatic <code>scrollTo</code> from an extension\'s isolated world dispatches no scroll events at all, even though <code>scrollY</code> moves.',
+  'Pass bar, stated in two past builds: <b>zero horizontal overflow, zero dead links, zero broken images, zero console errors, at every width.</b>',
+  'Then re-capture the published page at all three widths and diff section count and order against the reference extract.'],
+ gate:'Readiness gate: <code>publish({action:"preview"})</code> reporting <b>0 errors and 0 warnings</b> before the confirm.'},
+{n:'11',t:'Record and clean up',meta:'~1 min',
+ p:'The last phase is what makes the next run cheaper. Findings go to memory, the build goes in the ledger, the session is destroyed.',
+ code:`npx @framer/agent@latest session destroy &lt;id&gt;
+
+<span class="c"># append to the trap library, not a throwaway note</span>
+references/framer-traps.md
+builds.md   <span class="c"># project id · url · pages · credits · what is still open</span>`,
+ li:['Any new trap gets appended to <code>references/framer-traps.md</code> immediately. That is exactly what you asked for in the shop session — write it down so it stops repeating.',
+  'A build record so a later run does not rebuild something already shipped: project ID, published URL, page count, assets, credits spent, what is still open.',
+  'A reference-vs-build comparison sheet — matched section pairs, labelled — and hand it over.',
+  'Report deltas plainly. If something is off, say so with the numbers rather than calling it done.'],
+ gate:'<code>session destroy</code> always runs, success or failure.'}
+];
+const rail=$('#prail'),pane=$('#ppane');
+PHASES.forEach((p,i)=>{
+  const b=document.createElement('button');
+  b.className='pbtn';b.type='button';b.setAttribute('role','tab');
+  b.setAttribute('aria-selected',i===0?'true':'false');
+  b.innerHTML=`<span class="pn">${p.n}</span><span>${p.t}</span>`;
+  b.onclick=()=>{rail.querySelectorAll('.pbtn').forEach(x=>x.setAttribute('aria-selected','false'));
+    b.setAttribute('aria-selected','true');drawPhase(i);};
+  rail.append(b);
+});
+function drawPhase(i){const p=PHASES[i];
+  pane.innerHTML=`<h3>${p.n} · ${p.t}</h3><div class="pmeta">${p.meta}</div><p>${p.p}</p>
+   <h4>Commands</h4><pre>${p.code}</pre>
+   <h4>Rules</h4><ul>${p.li.map(x=>`<li>${x}</li>`).join('')}</ul>
+   ${p.gate?`<div class="gate">${svg('warn')}<span>${p.gate}</span></div>`:''}`;}
+drawPhase(0);
+
+/* ═════════ 05 traps ═════════ */
+const TRAPS=[
+['silent','<b>Variant interactions written through the agent API are dropped at publish.</b> A documented <code>onTap.0.action="SET_VARIANT"</code> serialized back correctly and published with hover handlers only, no click handler. Build interactions as code components.'],
+['silent','<b>The <code>+Node</code> creation command silently drops whole attribute classes.</b> <code>$control__*</code>, CMS <code>text="var(--variable-…)"</code> bindings and <code>link.href</code> on a collection template all report zero errors and render wrong. Create bare, then <code>SET</code>.'],
+['silent','<b>Replica overrides equal to the attribute default are not stored.</b> <code>opacity="1"</code>, <code>visible="true"</code>, <code>scale="1"</code> vanish, so the node inherits the primary\'s hidden state. Use sentinels — <code>0.999</code>.'],
+['silent','<b>Replica writes coalesce.</b> Four overrides in one call vanished and shipped white-on-white nav links twice. One <code>SET</code> per call, then read back.'],
+['silent','<b>Effect axes do not default to neutral.</b> Setting only <code>loopEffect.y</code> let <code>rotate</code> pick up a non-zero default and spun three hero windows. State every axis: x, y, scale, rotate, rotateX, rotateY, skewX, skewY, opacity.'],
+['silent','<code>hoverEffect.y</code> alone publishes with <code>scale:1.1</code>. Framer fills unspecified hover properties with its own defaults, not no-ops. Pin all of them, or clear with <code>hoverEffect="null"</code>.'],
+['silent','Array-valued effects must be written whole. <code>scrollVariantEffect.sections.&lt;i&gt;.*</code> set one index at a time lands only index 0, with no error.'],
+['silent','An unescaped double quote in DSL text silently wipes the whole line. Escape globally.'],
+['silent','A wrong Phosphor icon name fails silently. Names are spaced title case — <code>Identification Card</code>, not camelCase. <code>readIcons</code> ignores its query and returns all 1512; grep locally.'],
+['silent','<code>SET fontSize="null"</code> on a TextRun strips ALL run styling and merges adjacent runs — it destroyed every highlight and underline across eight headings, unrecoverably. <code>SET</code> on a virtual run id no-ops too. Delete and rebuild.'],
+['silent','<code>draft="false"</code> is accepted and never appears in <code>serialize</code>. Do not retry it.'],
+['silent','<code>shadow</code> is accepted by the DSL and does not render.'],
+['silent','Framer sometimes rehosts an Unsplash URL to a <code>framerusercontent</code> URL that renders empty. Screenshot and verify every image actually painted.'],
+['silent','A <code>+FrameNode</code> re-applied with a temp id already mapped this session <b>updates in place</b> instead of creating. A rebuild left two copies of a page. <code>DEL</code> the page\'s children first.'],
+['silent','<b>Temp ids are project-global.</b> Reusing a bare temp id across pages silently re-parented 150+ sections and scrambled ten pages. Suffix every temp id with the page slug.'],
+['order','<b>Build breakpoints narrow-to-wide.</b> A tablet derived from the 1440 primary keeps a 1440 rect and publishes <code>@media (min-width:1440px) and (max-width:1439.98px)</code> — never true. Derived from the 390 phone it is 810 immediately.'],
+['order','A stale breakpoint cannot be repaired. Re-setting the width, toggling it and republishing all fail. <code>DEL</code> it and recreate, with <code>width</code> in its own <code>applyChanges</code>.'],
+['order','Anchor links fail unless the target already carries <code>scrollTargetEnabled="true"</code> and an <code>elementId</code>. Build sections first, wire links second.'],
+['order','A cross-page <code>/shop#pricing</code> normalises silently to <code>/shop</code> when that page has no such <code>elementId</code>.'],
+['order','Create <b>every page shell first</b> so nav links resolve, and build the layout template before a second page exists.'],
+['order','A <code>SET</code> in the same call that created its parent <code>ComponentNode</code> fails with "target does not exist". Ids created in a batch do not exist within that batch.'],
+['order','Text presets must exist before the nodes that use them — inline typography is rejected once a preset is set.'],
+['order','Text-preset breakpoint slots are added in order: <code>medium</code> before <code>small</code>, each with an explicit <code>minWidth</code>. They resolve at publish, so the canvas cannot verify them.'],
+['order','Creating page breakpoints <b>realigns the preset default breakpoint</b>. Rebuild the preset slots afterwards.'],
+['order','CMS variables need a second pass. Setting <code>text="var(--variable-…)"</code> in the same DSL as the <code>collectionList.collection</code> SET fails for every field.'],
+['order','Make components fluid <b>before</b> creating breakpoints — component internals cannot be overridden per page breakpoint.'],
+['order','Settle the brand name before generating art. A rebrand cost three regenerations in one build.'],
+['verify','<b><code>getRect</code> lies on replicas.</b> A tablet whose <code>width</code> reads 810px still reports 1440, and it does not reflect writes on replica descendants — byte-identical numbers across real changes.'],
+['verify','<b>A canvas screenshot of a replica renders the primary.</b> You cannot see tablet or phone from the canvas at all.'],
+['verify','<b>Code components render in an isolated iframe on canvas.</b> A canvas screenshot shows a static placeholder, never behaviour.'],
+['verify','Fixed-position elements do not paint in canvas screenshots.'],
+['verify','The project model is innocent while the CSS is wrong — <code>$breakpoints[].mediaQueryRange</code> shows the correct range. Grep the published HTML.'],
+['verify','<b>Framer serves an empty shell on a cold fetch.</b> Retry until the body is real, or you will report a working page as broken. Straight after a publish one viewport can serve empty and the next render fine.'],
+['verify','<b><code>element.click()</code> does nothing on Framer tap handlers.</b> Use <code>mouse.down()/up()</code>. A test using <code>.click()</code> reported a working switcher and FAQ as broken.'],
+['verify','Programmatic <code>window.scrollTo</code> from a browser extension\'s isolated world dispatches no scroll events at all, even though <code>scrollY</code> moves.'],
+['verify','<code>framer.screenshot</code> refuses nodes taller than 16,384px. Screenshot sections, then slice tall captures into side-by-side strips.'],
+['verify','A sticky nav renders over every per-node screenshot. Crop from a full-page capture instead.'],
+['verify','Screenshots cannot render inside a <code>ComponentNode</code> definition, and a temporary visibility test on the definition <b>wipes the variant overrides</b>. Instance it on a non-routed DesignPageNode.'],
+['verify','<code>readComponentControls</code> is stale — it reported no Variable controls for a component whose <code>serialize</code> showed both.'],
+['verify','<code>getRect</code> returns 200×200 placeholders for nodes inside a component. Use <code>serialize().$rect</code>, after layout settles.'],
+['motion','125 appear effects were on <code>onMount</code> — they fire once at page load and never replay. Use <code>onInView</code> everywhere.'],
+['motion','<code>loopEffect.repeatType="mirror"</code> duration is a <b>half</b> cycle; a CSS <code>animation-duration</code> is a full one. Copying the number verbatim runs the float at half speed.'],
+['motion','<code>enter.opacity="0"</code> can leave content permanently invisible rather than un-animated. Re-screenshot the full page after any reveal pass.'],
+['motion','<code>appearEffect.enter.transition="tween"</code> is rejected. The grammar is <code>"tween 0,0,0.58,1 0.35s 0s"</code>. Stagger goes on the parent grid.'],
+['motion','Appear animations park as WAAPI animations with <code>fill:backwards</code> stuck running, and a running WAAPI animation overrides inline styles <i>and</i> <code>!important</code>. Cancel surgically on state change, never at boot.'],
+['motion','A <code>scrollVariantEffect</code> beats a tap handler. Where a tap must work, clear the effect on that breakpoint.'],
+['motion','<code>hoverEffect.transition="spring-physics"</code> is rejected without a stiffness value. Omit it.'],
+['motion','Framer\'s <code>hoverEffect</code> has no border-colour property. A hover border change needs a code component or a gesture variant.'],
+['layout','<b>An image fill on a nested frame letterboxes; on the sized frame it covers.</b> Put the fill directly on the frame that owns width and height.'],
+['layout','<b>Framer paints an image fill as <code>cover</code>.</b> A non-square SVG gets cropped. Size the frame to the asset\'s true aspect ratio, never a square box.'],
+['layout','Collapsing a grid to a stack needs children set to <code>width="1fr" height="auto"</code>, or every card collapses to zero height. Convert to a vertical stack rather than a 1-column grid.'],
+['layout','<code>stackWrapEnabled="true"</code> plus <code>width="auto"</code> collapses a horizontal stack to one child per row. Only wrap stacks sized <code>100%</code> or <code>1fr</code>.'],
+['layout','Vertical tickers need their own clip box — <code>height="100%"</code> and <code>overflow="clip"</code> on the ticker node — or the section publishes blank while the canvas looks perfect.'],
+['layout','<code>width="auto"</code> will not wrap text. It collapses to one character per line. Use <code>width="100%"</code> plus a px <code>maxWidth</code> on the wrapper.'],
+['layout','A variant root cannot be <code>width="100%"</code> or <code>1fr</code>. A component with a fixed 1200px root does not shrink on phone.'],
+['layout','<code>left</code> and <code>top</code> accept px only, no percentages. An absolutely positioned orbit built for 720px must be wrapped and <code>scale</code>d per breakpoint.'],
+['layout','<code>position="absolute"</code> is silently downgraded to relative when the node is a stack\'s only child, and <code>top</code>/<code>left</code> are then ignored.'],
+['layout','An absolutely pinned frame with <code>left</code> + <code>right</code> + <code>width="auto"</code> collapses to hug its content. Give it a px width and null the opposite pin.'],
+['layout','<code>gridRowHeightType="fit"</code> pins a 200px default on a component root — the whole component renders 200px tall with children overlapping by −300px.'],
+['layout','Auto-fill grids resolve to 2 columns, not 3. Use explicit <code>gridColumnCount</code> with per-breakpoint overrides.'],
+['layout','<code>borderLeft</code> + <code>radius</code> + <code>overflow="clip"</code> renders as a clipped arc. Square that side: <code>radius="0px 18px 18px 0px"</code>.'],
+['layout','Highlight blocks need line height. <code>textBackgroundPadding</code> is fixed px, so at a phone-scaled font the block overlaps the line above. <code>lineHeight="1.26em"</code> on the heading clears it — one root cause of "the highlighter is getting cut".'],
+['layout','Rejected outright: <code>gap</code> negatives and <code>gap="null"</code> · <code>gap</code> next to <code>stackDistribution="space-between"</code> · <code>lineHeight="1"</code> · <code>stackAlignment="stretch"</code> · <code>padding</code> on a RichTextNode or a <code>layout="null"</code> frame · <code>overflowX="auto"</code> under <code>overflow="visible"</code> · <code>aspectRatio</code> with an auto dimension · <code>height="1fr"</code> on an absolute layer · % width on variant roots.'],
+['assets','<b><code>framer.uploadImage({bytes})</code> fails on a cross-realm check</b>, even with a mimeType. Use <code>"data:image/png;base64,…"</code> or a public URL.'],
+['assets','An SVG with no <code>xmlns</code>, or a dangling <code>clip-path</code> with no <code>&lt;defs&gt;</code>, renders in Chrome and breaks in Framer. svgl.app ships PayPal broken that way, and its Stripe asset is a bare purple parallelogram.'],
+['assets','<code>framer.addSVG</code> fails with "Failed to optimize SVG". Use <code>uploadImage</code> with a data URI.'],
+['assets','<code>cdn.simpleicons.org</code> returns 403 to Framer\'s server-side fetcher. jsDelivr and svgl.app work; a data URI bypasses the fetcher entirely.'],
+['assets','<code>queryImages</code> returns real permanent Unsplash URLs with alt text and a dominant colour. Free, no key — but it throws, so wrap it.'],
+['assets','rembg leaves stray edge alpha, so <code>getbbox()</code> returns the whole canvas and a "tight crop" does nothing. Threshold at <code>a &gt; 28</code> — or skip rembg with <code>--background transparent</code>.'],
+['assets','Padding a generated plate uses the corner pixel as the pad colour. A white corner over a tinted field bakes white bars into the asset.'],
+['session','<b>Concurrent session cap is ~14 per API key across all agents.</b> One session per agent, destroyed on exit, fan out in waves of six — pairs when quota is tight.'],
+['session','The relay is the single point of failure. A drop mid-<code>applyChanges</code> half-applies the batch. Recovery: <code>relay restart</code>, sleep 20, retry until the session id is numeric.'],
+['session','The Framer plugin must be open in a project, or the MCP path fails outright. Another reason the CLI wins.'],
+['session','<code>exec</code>\'s <code>fs</code> is sandboxed to cwd, <code>/tmp</code> and <code>os.tmpdir()</code>; <code>process</code> is undefined; and the shell cwd resets after every call, so every command must <code>cd</code> first.'],
+['session','An errored <code>+Node</code> still creates the node, minus the bad attribute. Re-serialize after any errored batch or you double nodes.'],
+['session','<code>applyChanges</code> omits <code>renamedIds</code> entirely when nothing was renamed, so <code>r.renamedIds.x</code> throws mid-loop and you lose the rest of the batch.'],
+['session','<code>CREATE_VARIANT</code> and <code>+Variable</code> return no usable id. Discover breakpoints from <code>getNode().$breakpoints</code> and variables from the component\'s <code>variables[]</code>.'],
+['session','Model IDs drift. <code>nano_banana_2</code> worked in past builds and is absent from today\'s catalogue. Resolve from <code>higgsfield model list</code> every run.'],
+['session','Higgsfield Pro caps at <b>4 concurrent jobs</b>; the fifth returns <code>rate_limit_reached</code> as plain stdout with exit code 0. Batch in fours and verify with <code>file</code>.'],
+['session','<code>result_url</code> is a PNG whatever extension you save it under.']
+];
+const CATLBL={silent:'silent',order:'ordering',verify:'verifying',motion:'motion',layout:'layout',assets:'assets',session:'session'};
+const CATS=[...new Set(TRAPS.map(t=>t[0]))];
+let tCat=null;
+$('#tchips').innerHTML=CATS.map(c=>`<button class="chip" type="button" data-c="${c}" aria-pressed="false">${CATLBL[c]}</button>`).join('');
+$('#tchips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;
+  tCat=tCat===b.dataset.c?null:b.dataset.c;
+  $('#tchips').querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.c===tCat)));
+  drawTraps();};
+$('#tq').oninput=drawTraps;
+function drawTraps(){
+  const q=$('#tq').value.trim().toLowerCase();
+  const rows=TRAPS.filter(([c,b])=>(!tCat||c===tCat)&&(!q||(c+' '+b).replace(/<[^>]+>/g,'').toLowerCase().includes(q)));
+  $('#tcount').textContent=`${rows.length} of ${TRAPS.length}`;
+  $('#traplist').innerHTML=rows.length
+    ?rows.map(([c,b])=>`<div class="trap"><span class="cat">${CATLBL[c]}</span><div class="body">${b}</div></div>`).join('')
+    :`<div class="empty">Nothing matches that.</div>`;
+}
+drawTraps();
+
+/* ═════════ 06 worked example ═════════ */
+const EX={
+'1440':{h:18567,secs:[['hero-cinematic',1200,'Your LinkedIn brand. Without the AI accent.'],['roster',3130,'Some profiles we made human.'],['chapter · paper',1822,'You can smell it in one line.'],['chapter · plain',3256,'We do the homework. We learn you first.'],['boot',4920,'Founder OS'],['wall',1059,'Nobody here had time to learn LinkedIn.'],['pricing',985,'Four ways to grow. Three clients a month.'],['faq',926,'Everything founders ask before the first call.']]},
+'810':{h:13377,secs:[['hero-cinematic',1200,''],['roster',702,''],['chapter · paper',1912,''],['chapter · plain',3420,''],['boot',1326,''],['wall',881,''],['pricing',1354,''],['faq',1076,'']]},
+'390':{h:16540,secs:[['hero-cinematic',1200,''],['roster',763,''],['chapter · paper',2054,''],['chapter · plain',4064,''],['boot',1545,''],['wall',1457,''],['pricing',2394,''],['faq',1288,'']]}};
+$('#exsw').innerHTML=[['#FFFFFF','white'],['#F7F6FB','tint'],['#F4F0FF','lilac'],['#3E3799','accent'],['#4B5163','body'],['#020915','ink'],['#0A0A16','band']]
+  .map(([c,n])=>`<span class="sw" style="background:${c}" title="${c}"><span>${n}</span></span>`).join('');
+$('#bptabs').innerHTML=['1440','810','390'].map((w,i)=>
+  `<button class="bptab" type="button" role="tab" data-w="${w}" aria-selected="${i===0}">${w}px</button>`).join('');
+$('#bptabs').onclick=e=>{const b=e.target.closest('.bptab');if(!b)return;
+  $('#bptabs').querySelectorAll('.bptab').forEach(x=>x.setAttribute('aria-selected',String(x===b)));
+  drawEx(b.dataset.w);};
+function drawEx(w){const d=EX[w],max=Math.max(...d.secs.map(s=>s[1]));
+  $('#shot').src=`img/w${w}.jpg`;
+  $('#shotcap').innerHTML=`Full page at ${w}px — <b>${d.h.toLocaleString()}px</b> tall, ${d.secs.length} sections. Cropped for display; the capture keeps all of it.`;
+  $('#exkv').innerHTML=`<dt>title</dt><dd>Windmill Growth — LinkedIn ghostwriting for B2B founders</dd>
+    <dt>height</dt><dd class="mono">${d.h.toLocaleString()}px</dd>
+    <dt>fonts</dt><dd>DM&nbsp;Sans ×285 · Newsreader ×89 · Caveat ×6</dd>
+    <dt>scale</dt><dd class="mono">70 / 33 / 26 / 18 / 17 / 16 / 15 / 13 / 12</dd>
+    <dt>weights</dt><dd class="mono">400 · 500 · 300 · 600 · 350</dd>
+    <dt>radii</dt><dd class="mono">50% · 18 · 14 · 11 · 7 · 999</dd>
+    <dt>sections</dt><dd>8, identical order at all three widths</dd>`;
+  $('#exsec').innerHTML=d.secs.map(([n,h,head],i)=>`<tr><td>${i+1}</td>
+    <td><span class="h">${n}</span>${head?`<br><span style="font-size:11.5px;color:var(--mute)">${head}</span>`:''}
+    <div class="bar" style="width:${Math.round(h/max*100)}%;margin-top:5px"></div></td>
+    <td style="text-align:right" class="mono">${h.toLocaleString()}</td></tr>`).join('');}
+drawEx('1440');
+
+/* ═════════ 07 cost ═════════ */
+const COSTS=[['z_image','Z Image','throwaway comps',0.15],
+['nano_banana_2_lite','Nano Banana 2 Lite','fast reference edits',1],
+['seedream_v4_5','Seedream 4.5','face edit + scene swap',1],
+['recraft_v4_1','Recraft V4.1','logo, icon, vector marks',1.25],
+['nano_banana_pro','Nano Banana Pro','reference-driven siblings — the workhorse',2],
+['nano_banana_flash','Nano Banana 2','character and stylised work',2],
+['gpt_image_2@2k-med','GPT Image 2 · 2k medium','good enough for most plates',2.5],
+['gpt_image_2@1k','GPT Image 2 · 1k high','when small text must be crisp',4.5],
+['gpt_image_2@2k','GPT Image 2 · 2k high','the hero anchor, once per page',8.5]];
+$('#costtbl').innerHTML=`<thead><tr><th>model</th><th>use</th><th style="text-align:right">credits</th></tr></thead>
+<tbody>${COSTS.map(([id,n,u,c])=>`<tr class="${id==='nano_banana_pro'?'hi':''}">
+ <td>${n}</td><td style="font-size:13.5px">${u}</td><td class="n">${c}</td></tr>`).join('')}</tbody>`;
+const SPEND=[['Chairside',10.5,'6 headshots from one contact sheet'],
+['Orbit',30,'1 hero at 8.5 + 12 references at 2'],
+['Osprey',34,'4 GPT Image 2 grids, then rembg'],
+['Tessera',170,'6 story photos + two logo batches']];
+$('#spendlist').innerHTML=SPEND.map(([n,c,d])=>`<div class="spendrow">
+  <b>${n}</b><div class="g"><i style="width:${Math.round(c/170*100)}%"></i></div>
+  <span class="t">${c}</span>
+  <span style="grid-column:1/-1;font-size:12px;color:var(--mute);margin-top:-4px">${d}</span></div>`).join('');
+$('#cmodel').innerHTML=COSTS.map(([id,n,,c])=>`<option value="${c}"${id==='nano_banana_pro'?' selected':''}>${n} — ${c}</option>`).join('');
+function calc(){const per=+$('#cmodel').value,n=+$('#ccount').value,sheet=+$('#csheet').value,bal=+$('#cbal').value;
+  const calls=Math.ceil(n/sheet),total=+(calls*per).toFixed(2);
+  $('#ccountv').textContent=n;
+  $('#cout').innerHTML=`${total}<s>credits · ${calls} call${calls>1?'s':''} for ${n} asset${n>1?'s':''}</s>`;
+  const v=$('#cverdict');
+  if(total<=bal){v.className='verdict ok';v.innerHTML=`${svg('check')}<span>Fits. ${(+(bal-total).toFixed(2))} left over.</span>`;}
+  else{v.className='verdict no';v.innerHTML=`${svg('warn')}<span>Short by ${(+(total-bal).toFixed(2))}. The skill stops here and says so, rather than failing mid-build.</span>`;}}
+['#cmodel','#ccount','#csheet','#cbal'].forEach(s=>$(s).addEventListener('input',calc));
+calc();
+
+/* ═════════ 08 raycast ═════════ */
+const RC=[
+{icon:'key',h:'Snippet — the one you described',s:'Press <kbd>;</kbd>, type the keyword, the brief writes itself. Works in any text field, the Claude Code prompt included.',
+ bar:'<b>;</b>create-template',
+ expand:`/create-template
+reference: <mark>&lt;paste URL, image path, or Figma link&gt;</mark>
+template name: <mark>&lt;name&gt;</mark>
+framer project: <mark>&lt;URL, or leave blank for a new one&gt;</mark>
+widths: 1440, 810, 390
+graphics: higgsfield, references attached
+stage: replica first, then modifications
+notes: <mark>&lt;anything extra, or delete this line&gt;</mark>`,
+ foot:'Installed in one click via <code>raycast://snippets/import</code>. Nothing to configure by hand.'},
+{icon:'term',h:'Script command — no terminal first',s:'Type the command in Raycast, fill three fields, and it opens iTerm with Claude Code already running the skill.',
+ bar:'Create Framer Template',
+ args:[['reference','URL, image path, or Figma link — required'],
+  ['template name','optional, derived from the domain if blank'],
+  ['framer project','optional, a new project if blank']],
+ foot:'Lands in <code>~/.raycast-scripts/</code> next to your existing <code>ask-claude.sh</code>, so Raycast already indexes that folder.'}];
+$('#rc').innerHTML=RC.map((c,i)=>`<div class="rccard">
+ <div class="rchead"><h3>${svg(c.icon)}${c.h}</h3><p>${c.s}</p></div>
+ <div class="rcbody">
+  <div class="fakebar">${svg('term')}<span>${c.bar}</span><span class="cur"></span></div>
+  ${c.expand?`<div class="expand" id="exp${i}">${c.expand}</div>
+    <button class="copy" type="button" data-t="${i}">Copy the expansion</button>`:''}
+  ${c.args?c.args.map(([a,d])=>`<div class="argrow"><b>${a}</b><span>${d}</span></div>`).join(''):''}
+ </div>
+ <div class="rchead" style="border-bottom:0;border-top:1px solid var(--rule-2)"><p>${c.foot}</p></div>
+</div>`).join('');
+document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{
+  try{await navigator.clipboard.writeText($('#exp'+b.dataset.t).innerText);
+    b.textContent='Copied';b.dataset.done='1';
+    setTimeout(()=>{b.textContent='Copy the expansion';b.dataset.done='';},1600);}
+  catch{b.textContent='Select it manually';}});
+
+/* ═════════ 09 tree ═════════ */
+$('#tree').innerHTML=`<i>~/.claude/skills/</i>
+├── <b>create-template/</b>            <u>new — the orchestrator</u>
+│   ├── <b>SKILL.md</b>                12 phases, the gates, the brief contract
+│   ├── references/
+│   │   ├── <b>framer-traps.md</b>     80 traps, grouped — read before the first edit
+│   │   ├── <b>interactions.md</b>     why DSL handlers die at publish, and the code-component
+│   │   │                          patterns that work (portal, WAAPI cancel, token read)
+│   │   ├── <b>higgsfield.md</b>       model resolution, live costs, reference-attach rules,
+│   │   │                          contact sheets, the 4-concurrent cap
+│   │   ├── <b>capture.md</b>          capture + extract, incl. Figma proto and sitemap
+│   │   └── <b>quality-bars.md</b>     the 19 AI tells, niche DNA, the rejection ledger
+│   ├── scripts/
+│   │   ├── <b>capture-reference.mjs</b>  CDP full-page capture + design extract   <u>written, tested</u>
+│   │   ├── <b>verify-live.mjs</b>       9 widths: overflow, dead links, broken images, console
+│   │   ├── <b>compare.mjs</b>           reference vs published, section by section
+│   │   └── <b>slice-sheet.py</b>        cut a contact sheet into N assets
+│   └── <b>builds.md</b>                ledger — project ids, URLs, credits, what is open
+│
+└── <i>framer/</i>                     <u>untouched — regenerated by \`setup\`</u>
+    ├── SKILL.md                    owns the DSL grammar
+    └── projects/&lt;id&gt;/              task map + project inventory
+
+<i>~/.raycast-scripts/</i>
+└── <b>create-framer-template.sh</b>  Raycast script command, 3 arguments
+
+<i>Raycast snippet</i>
+└── <b>;create-template</b>            installed via raycast://snippets/import`;
+
+/* ═════════ 10 decisions ═════════ */
+const DECISIONS=[
+{k:'name',q:'Skill name',d:'The Raycast keyword you named is <code>;create-template</code>. Matching the skill name keeps one word for both.',o:['create-template','framer-template']},
+{k:'triggers',q:'Raycast surface',d:'The snippet is what you asked for. The script command is the no-terminal version.',o:['both','snippet only','script only']},
+{k:'widths',q:'Breakpoints',d:'1440 is stated in your briefs; 810 and 390 are what all nine builds actually used.',o:['1440 / 810 / 390','add 1920','add 1280']},
+{k:'project',q:'Framer project',d:'A new project unless you pass a URL — that is how most of the builds started.',o:['new unless URL given','always ask first']},
+{k:'stage',q:'Replica or divergence',d:'Your rule from the Kintsugi session: build it exactly, then modify. The alternative is diverging in one pass.',o:['replica, then modify','diverge immediately']},
+{k:'interactions',q:'Interaction layer',d:'DSL variant handlers do not survive publish. Code components do, at the cost of more work per behaviour.',o:['code components','DSL first, escalate if broken']},
+{k:'publish',q:'End of build',d:'Verification needs a live URL, so publishing is part of proving it works — and past builds published 20–43 times each.',o:['publish + verify','stop before publish']},
+{k:'budget',q:'Credit ceiling per build',d:'Above this it stops and asks. Past builds spent 10 to 170; your balance is 5.4.',o:['40','25','100','ask every time']},
+{k:'ledger',q:'Build record',d:'A running log of what exists, so a later run does not rebuild something already shipped.',o:['keep a ledger','no ledger']}];
+const picked={};
+$('#dlist').innerHTML=DECISIONS.map(d=>{picked[d.k]=d.o[0];
+  return `<div class="dcard"><h3>${d.q}</h3><p>${d.d}</p>
+   <div class="opts" data-k="${d.k}">${d.o.map((o,i)=>
+    `<button class="opt" type="button" data-v="${o}" aria-pressed="${i===0}">${o}</button>`).join('')}</div></div>`;}).join('');
+$('#dlist').onclick=e=>{const b=e.target.closest('.opt');if(!b)return;
+  const box=b.closest('.opts');picked[box.dataset.k]=b.dataset.v;
+  box.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  drawSum();};
+function drawSum(){
+  const pad=Math.max(...Object.keys(picked).map(k=>k.length));
+  $('#dpre').textContent=Object.entries(picked).map(([k,v])=>`${k.padEnd(pad)} : ${v}`).join('\n');
+  const changed=DECISIONS.filter(d=>picked[d.k]!==d.o[0]).length;
+  $('#dfoot').innerHTML=changed
+    ?`<b>${changed}</b> change${changed>1?'s':''} from the defaults. Say "approved with those changes" and I'll build it exactly like this.`
+    :`All defaults. Say <b>approved</b> and I'll build it.`;}
+drawSum();
+</script>
+</body>
+</html>
